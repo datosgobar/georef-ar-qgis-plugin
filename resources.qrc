@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/georef_ar_api" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
