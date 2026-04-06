@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutDialogBase</class>
+ <widget class="QDialog" name="AboutDialogBase">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>400</width><height>300</height></rect></property>
+  <property name="windowTitle"><string>Acerca de Georef AR</string></property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item align="center">
+    <widget class="QLabel" name="label_logo">
+     <property name="minimumSize"><size><width>100</width><height>100</height></size></property>
+     <property name="text"><string/></property>
+     <property name="pixmap"><pixmap resource="../resources.qrc">:/plugins/georef_ar_api/icon.png</pixmap></property>
+     <property name="scaledContents"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_title">
+     <property name="font"><font><pointsize>12</pointsize><weight>75</weight></font></property>
+     <property name="text"><string>Georef AR QGIS Plugin</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_desc">
+     <property name="text"><string>Plugin oficial para el consumo de la API de Georeferenciación de la República Argentina.</string></property>
+     <property name="alignment"><set>Qt::AlignCenter</set></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_links">
+     <property name="text"><string><![CDATA[<p align="center">Versión 0.1<br><a href="https://datosgobar.github.io/georef-ar-qgis-plugin/">Documentación</a> | <a href="mailto:datosargentina@sicyt.gob.ar">Contacto</a></p>]]></string></property>
+     <property name="openExternalLinks"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons"><set>QDialogButtonBox::Close</set></property>
+     <property name="centerButtons"><bool>true</bool></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+</ui>

@@ -27,16 +27,21 @@ import requests
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
+from qgis._core import QgsVectorLayer, QgsProject, QgsSettings
+
+from ..utils import get_shp_file
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'georef_ar_api_dialog_base.ui'))
+current_dir = os.path.dirname(__file__)
+ui_path = os.path.abspath(os.path.join(current_dir, '..', 'ui', 'endpoint_dialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(ui_path)
 
 
-class GeorefArApiDialog(QtWidgets.QDialog, FORM_CLASS):
+class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
+
     def __init__(self, parent=None):
         """Constructor."""
-        super(GeorefArApiDialog, self).__init__(parent)
+        super(EndpointDialog, self).__init__(parent)
         # Set up the user interface from Designer through FORM_CLASS.
         # After self.setupUi() you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -54,6 +59,8 @@ class GeorefArApiDialog(QtWidgets.QDialog, FORM_CLASS):
 
         # Carga inicial
         self.load_provinces_names()
+
+        self.button_box.accepted.connect(self.on_accepted)
 
     def get_url(self, endpoint):
         """Construye la URL completa dinámicamente"""
@@ -116,3 +123,48 @@ class GeorefArApiDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.comboBox_departamentos.addItem(depto['nombre'], depto['id'])
         except Exception as e:
             print(f"Error departamentos: {e}")
+
+    def on_accepted(self):
+
+        settings = QgsSettings()
+        base_url = settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.0")
+        source = ""
+        nombre_capa = ""
+
+        # Lógica de decisión
+        prov_id = self.comboBox_provincias.currentData()
+        depto_id = self.comboBox_departamentos.currentData()
+
+        # Caso 1: Checkbox Departamentos activo
+        if self.checkBox_departamentos.isChecked():
+            if depto_id:  # Un departamento específico
+                source = f"{base_url}/departamentos?id={depto_id}&campos=completo&formato=geojson"
+                nombre_capa = f"Depto: {self.comboBox_departamentos.currentText()}"
+            elif prov_id:  # Todos los departamentos de esa provincia
+                source = f"{base_url}/departamentos?provincia={prov_id}&campos=completo&max=500&formato=geojson"
+                nombre_capa = f"Deptos de {self.comboBox_provincias.currentText()}"
+
+        # Caso 2: Checkbox Provincias activo (y no el de deptos)
+        elif self.checkBox_provincias.isChecked():
+            if prov_id:  # Una provincia específica
+                source = f"{base_url}/provincias?id={prov_id}&campos=completo&formato=shp"
+                nombre_capa = f"Provincia: {self.comboBox_provincias.currentText()}"
+            else:  # Todas las provincias
+                source = f"{base_url}/provincias?campos=completo&max=100&formato=shp"
+                nombre_capa = "Todas las Provincias"
+
+        formato = "shp"
+
+        # Cargar la capa si se definió una URL
+        if source:
+
+            if formato == "shp":
+                source = get_shp_file(source, self.iface)
+
+            vlayer = QgsVectorLayer(source, nombre_capa, "ogr")
+            if vlayer.isValid():
+                QgsProject.instance().addMapLayer(vlayer)
+            else:
+                self.iface.messageBar().pushMessage("Error", "No se pudo obtener datos de la API", level=3)
+        else:
+            self.iface.messageBar().pushMessage("Aviso", "Active un checkbox para cargar datos", level=2)

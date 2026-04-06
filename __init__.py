@@ -32,5 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .georef_ar_api import GeorefArApi
-    return GeorefArApi(iface)
+    from .georef_qgis_plugin import GeorefQgisPlugin
+    return GeorefQgisPlugin(iface)

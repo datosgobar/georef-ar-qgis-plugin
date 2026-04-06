@@ -43,30 +43,44 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_refresh">
+       <property name="text">
+        <string>Configurar URL</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QCheckBox" name="checkBox_provincias">
        <property name="text">
         <string>Cargar Provincias</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="4" column="1">
       <widget class="QComboBox" name="comboBox_provincias"/>
      </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QCheckBox" name="checkBox_departamentos">
        <property name="text">
         <string>Cargar Departamentos</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="5" column="1">
       <widget class="QComboBox" name="comboBox_departamentos"/>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="pushButton_refresh">
+     <item row="2" column="1">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Configurar URL</string>
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>

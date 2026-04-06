@@ -21,19 +21,22 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QMenu
 from qgis._core import QgsVectorLayer, QgsProject
 
+from .logic.about_dialog import AboutDialog
+from .logic.settings_dialog import SettingsDialog
+from .logic.endpoint_dialog import EndpointDialog
+from .utils import get_shp_file
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .georef_ar_api_dialog import GeorefArApiDialog
 import os.path
 
-
-class GeorefArApi:
+class GeorefQgisPlugin:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -64,9 +67,11 @@ class GeorefArApi:
         self.actions = []
         self.menu = self.tr(u'&Georef Ar Api')
 
+        self.dlg = None
+
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
-        self.first_start = None
+        self.first_start = True
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -159,77 +164,79 @@ class GeorefArApi:
         return action
 
     def initGui(self):
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
         icon_path = ':/plugins/georef_ar_api/icon.png'
-        self.add_action(
-            icon_path,
-            text=self.tr(u'api'),
-            callback=self.run,
-            parent=self.iface.mainWindow())
 
-        # will be set False in run()
-        self.first_start = True
+        # 1. Crear las acciones
+        self.action_endpoint = QAction(
+            QIcon(icon_path),
+            self.tr(u'Endpoints'),
+            self.iface.mainWindow()
+        )
+        self.action_endpoint.triggered.connect(self.endpoint_callback)
 
+        self.action_settings = QAction(
+            self.tr(u'Settings'),
+            self.iface.mainWindow()
+        )
+        self.action_settings.triggered.connect(self.settings_callback)
+
+        self.action_about = QAction(
+            self.tr(u'About'),
+            self.iface.mainWindow()
+        )
+        self.action_about.triggered.connect(self.about_callback)
+
+        # 2. Obtener el menú de Complementos (Plugins) de QGIS
+        plugins_menu = self.iface.pluginMenu()
+
+        # 3. Buscar si ya existe el submenú de tu plugin o crearlo
+        # Esto evita que se cree el menú repetido si recargas
+        self.q_menu = None
+        for action in plugins_menu.actions():
+            if action.menu() and action.menu().title() == self.tr(u'Georef Ar Api'):
+                self.q_menu = action.menu()
+                break
+
+        if not self.q_menu:
+            # Si no existe, lo creamos y lo añadimos al menú de Complementos
+            self.q_menu = QMenu(self.tr(u'Georef Ar Api'), plugins_menu)
+            plugins_menu.addMenu(self.q_menu)
+
+        # 4. Limpiar el menú antes de agregar (por si es una recarga)
+        self.q_menu.clear()
+
+        # 5. Agregar las acciones
+        self.q_menu.addAction(self.action_endpoint)
+        self.q_menu.addSeparator()
+        self.q_menu.addAction(self.action_settings)
+        self.q_menu.addAction(self.action_about)
+
+        # 6. Icono en la barra de herramientas
+        self.iface.addToolBarIcon(self.action_endpoint)
+
+        self.actions = [self.action_endpoint, self.action_about]
 
     def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&Georef Ar Api'),
-                action)
-            self.iface.removeToolBarIcon(action)
+        # Quitamos el icono de la barra
+        self.iface.removeToolBarIcon(self.action_endpoint)
 
+        # Quitamos el menú completo de la barra de Complementos
+        plugins_menu = self.iface.pluginMenu()
+        plugins_menu.removeAction(self.q_menu.menuAction())
 
-    def run(self):
-        """Run method that performs all the real work"""
-
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start:
-            self.first_start = False
-            self.dlg = GeorefArApiDialog()
-
-        # show the dialog
+    def endpoint_callback(self):
+        self.dlg = EndpointDialog()
         self.dlg.show()
+        self.dlg.exec_()
 
-        # Run the dialog event loop
-        result = self.dlg.exec_()
 
-        # See if OK was pressed
-        if result:
-            base_url = self.dlg.lineEdit_url_base.text().strip().rstrip('/')
-            url_final = ""
-            nombre_capa = ""
+    def settings_callback(self):
+        self.dlg = SettingsDialog()
+        self.dlg.show()
+        self.dlg.exec_()
 
-            # Lógica de decisión
-            prov_id = self.dlg.comboBox_provincias.currentData()
-            depto_id = self.dlg.comboBox_departamentos.currentData()
 
-            # Caso 1: Checkbox Departamentos activo
-            if self.dlg.checkBox_departamentos.isChecked():
-                if depto_id:  # Un departamento específico
-                    url_final = f"{base_url}/departamentos?id={depto_id}&campos=completo&formato=geojson"
-                    nombre_capa = f"Depto: {self.dlg.comboBox_departamentos.currentText()}"
-                elif prov_id:  # Todos los departamentos de esa provincia
-                    url_final = f"{base_url}/departamentos?provincia={prov_id}&campos=completo&max=500&formato=geojson"
-                    nombre_capa = f"Deptos de {self.dlg.comboBox_provincias.currentText()}"
 
-            # Caso 2: Checkbox Provincias activo (y no el de deptos)
-            elif self.dlg.checkBox_provincias.isChecked():
-                if prov_id:  # Una provincia específica
-                    url_final = f"{base_url}/provincias?id={prov_id}&campos=completo&formato=geojson"
-                    nombre_capa = f"Provincia: {self.dlg.comboBox_provincias.currentText()}"
-                else:  # Todas las provincias
-                    url_final = f"{base_url}/provincias?campos=completo&max=100&formato=geojson"
-                    nombre_capa = "Todas las Provincias"
-
-            # Cargar la capa si se definió una URL
-            if url_final:
-                vlayer = QgsVectorLayer(url_final, nombre_capa, "ogr")
-                if vlayer.isValid():
-                    QgsProject.instance().addMapLayer(vlayer)
-                else:
-                    self.iface.messageBar().pushMessage("Error", "No se pudo obtener datos de la API", level=3)
-            else:
-                self.iface.messageBar().pushMessage("Aviso", "Active un checkbox para cargar datos", level=2)
+    def about_callback(self):
+        self.dlg = AboutDialog(self.iface.mainWindow())
+        self.dlg.exec_()

@@ -3,17 +3,17 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Georef Ar Api
+name=Georef Ar QGIS Plugin
 qgisMinimumVersion=3.0
-description=Este plugin consume la API de Goeref-ar-api
+description=Plugin desarrollado para consultas a la API de Georef-Ar
 version=0.1
 author=Datos Argentina
 email=datosargentina@sicyt.gob.ar
 
 about=Provide a brief description of the plugin and its purpose.
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/datosgobar/georef-ar-qgis-plugin/issues
+repository=https://github.com/datosgobar/georef-ar-qgis-plugin
 # End of mandatory metadata
 
 # Recommended items:
