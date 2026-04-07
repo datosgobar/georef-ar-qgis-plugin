@@ -2,43 +2,153 @@
 <ui version="4.0">
  <class>AboutDialogBase</class>
  <widget class="QDialog" name="AboutDialogBase">
-  <property name="geometry"><rect><x>0</x><y>0</y><width>400</width><height>300</height></rect></property>
-  <property name="windowTitle"><string>Acerca de Georef AR</string></property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Acerca de Georef AR</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item align="center">
+   <item>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QLabel" name="label_logo">
-     <property name="minimumSize"><size><width>100</width><height>100</height></size></property>
-     <property name="text"><string/></property>
-     <property name="pixmap"><pixmap resource="../resources.qrc">:/plugins/georef_ar_api/icon.png</pixmap></property>
-     <property name="scaledContents"><bool>true</bool></property>
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../resources.qrc">:/plugins/georef_ar_api/icon.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_title">
-     <property name="font"><font><pointsize>12</pointsize><weight>75</weight></font></property>
-     <property name="text"><string>Georef AR QGIS Plugin</string></property>
-     <property name="alignment"><set>Qt::AlignCenter</set></property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Georef AR QGIS Plugin</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_desc">
-     <property name="text"><string>Plugin oficial para el consumo de la API de Georeferenciación de la República Argentina.</string></property>
-     <property name="alignment"><set>Qt::AlignCenter</set></property>
-     <property name="wordWrap"><bool>true</bool></property>
+     <property name="text">
+      <string>Plugin oficial para el consumo de la API de Georeferenciación de la República Argentina.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QLabel" name="label_links">
-     <property name="text"><string><![CDATA[<p align="center">Versión 0.1<br><a href="https://datosgobar.github.io/georef-ar-qgis-plugin/">Documentación</a> | <a href="mailto:datosargentina@sicyt.gob.ar">Contacto</a></p>]]></string></property>
-     <property name="openExternalLinks"><bool>true</bool></property>
+     <property name="text">
+      <string>&lt;p align=&quot;center&quot;&gt;Versión 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;Contacto&lt;/a&gt;&lt;/p&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons"><set>QDialogButtonBox::Close</set></property>
-     <property name="centerButtons"><bool>true</bool></property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+     <property name="centerButtons">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AboutDialogBase</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

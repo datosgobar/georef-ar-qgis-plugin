@@ -8,5 +8,3 @@ class AboutDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
-        self.buttonBox.rejected.connect(self.reject)
-        # El Close button ya viene conectado por defecto en el UI
