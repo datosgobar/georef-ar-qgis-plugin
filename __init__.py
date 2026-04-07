@@ -22,6 +22,7 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+import os
 
 
 # noinspection PyPep8Naming
@@ -31,6 +32,23 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
+    dev_marker = os.path.join(os.path.dirname(__file__), '.dev')
+    if os.path.exists(dev_marker):
+        connect_debug()
+
     from .georef_qgis_plugin import GeorefQgisPlugin
     return GeorefQgisPlugin(iface)
+
+def connect_debug():
+    try:
+        import pydevd_pycharm
+        pydevd_pycharm.settrace(
+            '127.0.0.1',
+            port=5678,
+            stdout_to_server=True,
+            stderr_to_server=True,
+            suspend=False
+        )
+        print("GEOREF-DEBUG: Conexión remota establecida desde classFactory.")
+    except (ImportError, Exception):
+        print(f"GEOREF-DEBUG: Falló la conexión. Error: {e}")
