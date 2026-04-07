@@ -1,0 +1,21 @@
+# endpoints.yaml
+endpoints:
+  provincias:
+    titulo: "Provincias"
+    url_path: "/provincias"
+    parametros:
+      - {nombre: "nombre", label: "Nombre", default: ""}
+      - {nombre: "max", label: "Cantidad máx.", default: "100"}
+  departamentos:
+    titulo: "Departamentos"
+    url_path: "/departamentos"
+    parametros:
+      - {nombre: "nombre", label: "Nombre", default: ""}
+      - {nombre: "provincia", label: "ID/Nombre Prov.", default: ""}
+      - {nombre: "max", label: "Cantidad máx.", default: "100"}
+  municipios:
+    titulo: "Municipios"
+    url_path: "/municipios"
+    parametros:
+      - {nombre: "nombre", label: "Nombre", default: ""}
+      - {nombre: "max", label: "Cantidad máx.", default: "100"}

@@ -225,7 +225,7 @@ class GeorefQgisPlugin:
         plugins_menu.removeAction(self.q_menu.menuAction())
 
     def endpoint_callback(self):
-        self.dlg = EndpointDialog()
+        self.dlg = EndpointDialog(self.iface)
         self.dlg.show()
         self.dlg.exec_()
 
