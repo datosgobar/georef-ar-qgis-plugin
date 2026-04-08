@@ -30,7 +30,6 @@ from qgis._core import QgsVectorLayer, QgsProject
 from .logic.about_dialog import AboutDialog
 from .logic.settings_dialog import SettingsDialog
 from .logic.endpoint_dialog import EndpointDialog
-from .utils import get_shp_file
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog

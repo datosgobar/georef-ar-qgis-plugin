@@ -50,5 +50,5 @@ def connect_debug():
             suspend=False
         )
         print("GEOREF-DEBUG: Conexión remota establecida desde classFactory.")
-    except (ImportError, Exception):
+    except (ImportError, Exception) as e:
         print(f"GEOREF-DEBUG: Falló la conexión. Error: {e}")
