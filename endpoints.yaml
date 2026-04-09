@@ -7,7 +7,7 @@ endpoints:
       - { name: "nombre", label: "nombre", default: "", options: "provincias" }
       - { name: "campos", label: "campos", default: "estandar", options: [ "basico", "estandar", "completo" ] }
       - { name: "max", label: "max", default: "24" }
-      - { name: "formato", label: "formato", default: "gpkg", options: [ "xml", "csv", "json", "geojson", "shp", "gpkg" ] }
+      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
   departamentos:
     titulo: "Departamentos"
     url_path: "/departamentos"
@@ -17,5 +17,17 @@ endpoints:
       - { name: "provincia", label: "provincia", default: "", options: "provincias" }
       - { name: "max", label: "cantidad", default: "10" }
       - { name: "campos", label: "campos", default: "estandar", options: ["basico", "estandar", "completo"] }
-      - { name: "formato", label: "formato", default: "gpkg", options: [ "xml", "csv", "json", "geojson", "shp", "gpkg" ] }
+      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+  gobiernos-locales:
+    titulo: "Gobiernos locales"
+    url_path: "/gobiernos_locales"
+    parametros:
+      - { name: "id", label: "id", default: "" }
+      - { name: "nombre", label: "nombre", default: "", options: "gobiernos-locales", dependency: ["departamento"]}
+      - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+      - { name: "departamento", label: "departamento", default: "", options: "departamento", dependency: ["provincia"] }
+      - { name: "max", label: "cantidad", default: "10" }
+      - { name: "campos", label: "campos", default: "estandar", options: ["basico", "estandar", "completo"] }
+      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
 
