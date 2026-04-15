@@ -1,33 +1,138 @@
-endpoints:
-  provincias:
-    titulo: "Provincias"
-    url_path: "/provincias"
-    parametros:
-      - { name: "id", label: "id", default: "" }
-      - { name: "nombre", label: "nombre", default: "", options: "provincias" }
-      - { name: "campos", label: "campos", default: "estandar", options: [ "basico", "estandar", "completo" ] }
-      - { name: "max", label: "max", default: "24" }
-      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-  departamentos:
-    titulo: "Departamentos"
-    url_path: "/departamentos"
-    parametros:
-      - { name: "id", label: "id", default: "" }
-      - { name: "nombre", label: "nombre", default: "", options: "departamentos", dependency: ["provincia"]}
-      - { name: "provincia", label: "provincia", default: "", options: "provincias" }
-      - { name: "max", label: "cantidad", default: "10" }
-      - { name: "campos", label: "campos", default: "estandar", options: ["basico", "estandar", "completo"] }
-      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-  gobiernos-locales:
-    titulo: "Gobiernos locales"
-    url_path: "/gobiernos_locales"
-    parametros:
-      - { name: "id", label: "id", default: "" }
-      - { name: "nombre", label: "nombre", default: "", options: "gobiernos-locales", dependency: ["departamento"]}
-      - { name: "provincia", label: "provincia", default: "", options: "provincias" }
-      - { name: "departamento", label: "departamento", default: "", options: "departamento", dependency: ["provincia"] }
-      - { name: "max", label: "cantidad", default: "10" }
-      - { name: "campos", label: "campos", default: "estandar", options: ["basico", "estandar", "completo"] }
-      - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+provincias:
+  titulo: "Provincias"
+  url_path: "/provincias"
+  parametros:
+    - { name: "id", label: "id", default: "" }
+    - { name: "nombre", label: "nombre", default: "", options: "provincias" }
+    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ] }
+    - { name: "max", label: "max", default: "24" }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
+departamentos:
+  titulo: "Departamentos"
+  url_path: "/departamentos"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "nombre", label: "nombre", default: "", options: "departamentos", dependency: ["provincia"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+aglomerados:
+  titulo: "Aglomerados"
+  url_path: "/aglomerados"
+  parametros:
+    - { name: "nombre", label: "nombre", default: "", options: "aglomerados" }
+    - { name: "id", label: "id", default: "" }
+    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ] }
+    - { name: "max", label: "max", default: "120" }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+fracciones-censales:
+  titulo: "Fracciones censales"
+  url_path: "/fracciones-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+radios-censales:
+  titulo: "Radios censales"
+  url_path: "/radios-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+gobiernos-locales:
+  titulo: "Gobiernos locales"
+  url_path: "/gobiernos-locales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "nombre", label: "nombre", default: "", options: "gobiernos-locales", dependency: ["provincia"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "categoria", label: "categoria", default: "", options: [ "Comisión de Fomento", "Comuna Rural", "Comisiòn Municipal", "Comuna", "Junta de Gobierno", "Municipio", "Comisión Municipal" ] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+localidades-censales:
+  titulo: "Localidades censales"
+  url_path: "/localidades-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "nombre", label: "nombre", default: "", options: "gobiernos-locales", dependency: ["provincia"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+asentamientos:
+  titulo: "Asentamientos"
+  url_path: "/asentamientos"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: ["provincia"] }
+    - { name: "nombre", label: "nombre", default: "", options: "asentamientos", dependency: ["departamento"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos" ] }
+
+localidades:
+  titulo: "Localidades"
+  url_path: "/localidades"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: ["provincia"] }
+    - { name: "nombre", label: "nombre", default: "", options: "localidades", dependency: ["departamento"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos" ] }
+
+calles:
+  titulo: "Calles"
+  url_path: "/calles"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: ["provincia"] }
+    - { name: "localidad_censal", label: "localidad censal", default: "", options: "localidades-censales", dependency: [ "departamento" ] }
+    - { name: "localidad", label: "localidad", default: "", options: "localidades", dependency: [ "departamento" ] }
+    - { name: "nombre", label: "nombre", default: "", options: "localidades", dependency: ["localidad-censal"]}
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "lineas", options: [ "lineas" ] }
+
+direcciones:
+  titulo: "Direcciones"
+  url_path: "/direcciones"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: ["provincia"] }
+    - { name: "localidad_censal", label: "localidad censal", default: "", options: "localidades-censales", dependency: [ "departamento" ] }
+    - { name: "localidad", label: "localidad", default: "", options: "localidades", dependency: [ "departamento" ] }
+    - { name: "direccion", label: "direccion", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "exacto", label: "exacto", default: "False", options: [ "True", "False" ] }
+    - { name: "desplazar", label: "desplazar", default: "False", options: [ "True", "False" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
+
+ubicacion:
+  titulo: "Ubicación por punto"
+  url_path: "/ubicacion"
+  parametros:
+    - { name: "lat", label: "Latitud", default: "" }
+    - { name: "lon", label: "Longitud", default: "" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
+    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ] }
 
