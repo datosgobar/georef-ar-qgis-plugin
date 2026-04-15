@@ -150,7 +150,15 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         for p in params:
             # 1. Crear el widget de edición primero para preservar el valor
             opt_config = p.get('options')
-            if opt_config:
+
+            is_boolean = isinstance(p.get('default'), bool) or p.get('name') in ['exacto', 'desplazar']
+
+            if is_boolean:
+                edit = QtWidgets.QCheckBox()
+                # Convertimos el string 'verdadero'/'falso' del YAML a booleano real
+                default_val = str(p.get('default', 'falso')).lower() == 'verdadero' or p.get('default') is True
+                edit.setChecked(default_val)
+            elif opt_config:
                 edit = QtWidgets.QComboBox()
                 edit.setEditable(True)
                 values = []
@@ -172,6 +180,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 edit.setVisible(False)
                 continue
 
+
+
             # 4. Crear la interfaz solo para parámetros visibles
             container = QtWidgets.QWidget()
             lyt = QtWidgets.QHBoxLayout(container)
@@ -179,13 +189,17 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             lyt.setSpacing(10)
 
             lbl = QtWidgets.QLabel(p['label'])
-            lbl.setFixedWidth(96)
+            lbl.setFixedWidth(128)
             lyt.addWidget(lbl)
 
             edit_layout = QtWidgets.QHBoxLayout()
             edit_layout.setContentsMargins(0, 0, 0, 0)
             edit_layout.setSpacing(2)
             edit_layout.addWidget(edit)
+
+            if is_boolean:
+                edit.setText(p['label'])  # El texto va al lado del check
+                lbl.setVisible(False)
 
             # Lógica de selección en mapa
             if p['name'] in ['lat', 'lon']:
