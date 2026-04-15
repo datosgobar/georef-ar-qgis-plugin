@@ -88,6 +88,7 @@ asentamientos:
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "categoria", label: "categoria", default: "", options: [ "Base Antártica", "Componente de localidad compuesta", "Entidad", "Localidad simple", "ParajeBase Antártica", "Componente de localidad compuesta", "Entidad", "Localidad simple", "Paraje" ] }
     - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
 
 localidades:
