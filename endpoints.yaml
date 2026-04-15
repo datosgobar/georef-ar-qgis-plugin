@@ -86,7 +86,7 @@ asentamientos:
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos" ] }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
 
 localidades:
   titulo: "Localidades"
@@ -98,7 +98,7 @@ localidades:
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos" ] }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
 
 calles:
   titulo: "Calles"
