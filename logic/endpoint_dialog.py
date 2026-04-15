@@ -241,7 +241,12 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # Extraemos los nombres
             key = layer.replace("-", "_")
             items = data.get(key, [])
-            new_values = sorted([item["nombre"] for item in items])
+
+            param_key = 'nombre'
+            if key == 'fracciones_censales':
+                param_key = 'id'
+
+            new_values = sorted([item[param_key] for item in items])
 
             if new_values:
                 combo_widget.clear()
