@@ -70,6 +70,7 @@ localidades-censales:
   parametros:
     - { name: "provincia", label: "provincia", default: "", options: "provincias" }
     - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "gobierno_local", label: "gobierno local", default: "", options: "gobiernos-locales", dependency: [ "provincia" ] }
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
@@ -94,6 +95,7 @@ localidades:
   parametros:
     - { name: "provincia", label: "provincia", default: "", options: "provincias" }
     - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: ["provincia"] }
+    - { name: "gobierno_local", label: "gobierno local", default: "", options: "gobiernos-locales", dependency: [ "provincia" ] }
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
