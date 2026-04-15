@@ -140,16 +140,40 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             item = self.layout_params.takeAt(0)
             widget = item.widget()
             if widget is not None:
-                widget.setParent(None)  # Lo desconecta visualmente ya
-                widget.deleteLater()  # Libera la memoria luego
+                widget.setParent(None)
+                widget.deleteLater()
 
         self.param_widgets.clear()
         key = self.comboBox_endpoints.currentData()
         params = self.api_config[key].get('parametros', [])
 
         for p in params:
+            # 1. Crear el widget de edición primero para preservar el valor
+            opt_config = p.get('options')
+            if opt_config:
+                edit = QtWidgets.QComboBox()
+                edit.setEditable(True)
+                values = []
+                if opt_config == "provincias":
+                    values = self.fetch_values(opt_config, params)
+                elif isinstance(opt_config, list):
+                    values = opt_config
+                edit.addItems(values)
+                edit.setEditText(str(p.get('default', '')))
+            else:
+                edit = QtWidgets.QLineEdit(str(p.get('default', '')))
+
+            # 2. GUARDAR SIEMPRE en el diccionario (aunque sea invisible)
+            self.param_widgets[p['name']] = edit
+
+            # 3. VERIFICAR VISIBILIDAD
+            # Si 'visible' es False en el YAML, ocultamos el widget y saltamos la creación del layout
+            if not p.get('visible', True):
+                edit.setVisible(False)
+                continue
+
+            # 4. Crear la interfaz solo para parámetros visibles
             container = QtWidgets.QWidget()
-            # container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
             lyt = QtWidgets.QHBoxLayout(container)
             lyt.setContentsMargins(0, 5, 0, 5)
             lyt.setSpacing(10)
@@ -158,31 +182,12 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             lbl.setFixedWidth(96)
             lyt.addWidget(lbl)
 
-            # Contenedor para el widget de edición + botón opcional
             edit_layout = QtWidgets.QHBoxLayout()
             edit_layout.setContentsMargins(0, 0, 0, 0)
             edit_layout.setSpacing(2)
-
-            opt_config = p.get('options')
-            if opt_config:
-                edit = QtWidgets.QComboBox()
-                edit.setEditable(True)
-                # Carga inicial (puede ser vacía o genérica)
-                values = []
-                if opt_config == "provincias":
-                    values = self.fetch_values(opt_config, params)
-
-                elif isinstance(opt_config, list):
-                    values = opt_config
-
-                edit.addItems(values)
-                edit.setEditText(str(p.get('default', '')))
-            else:
-                edit = QtWidgets.QLineEdit(str(p.get('default', '')))
-
             edit_layout.addWidget(edit)
 
-            # --- LÓGICA DE SELECCIÓN EN MAPA ---
+            # Lógica de selección en mapa
             if p['name'] in ['lat', 'lon']:
                 btn_map = QtWidgets.QPushButton()
                 btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
@@ -191,16 +196,13 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 btn_map.clicked.connect(self.activate_map_tool)
                 edit_layout.addWidget(btn_map)
 
-            # --- LÓGICA DE DEPENDENCIA ---
+            # Lógica de dependencia
             if 'dependency' in p and isinstance(opt_config, str):
                 btn_refresh = QtWidgets.QPushButton()
-                # Usamos un icono estándar de sistema para "Refresh"
                 icon = self.style().standardIcon(QtWidgets.QStyle.SP_BrowserReload)
                 btn_refresh.setIcon(icon)
                 btn_refresh.setFixedSize(28, 28)
                 btn_refresh.setToolTip(f"Actualizar basado en: {', '.join(p['dependency'])}")
-
-                # Conectamos el click usando una función lambda para pasarle el contexto
                 btn_refresh.clicked.connect(
                     lambda chk=False, w=edit, target=opt_config, deps=p['dependency']:
                     self.refresh_dependent_combo(w, target, deps)
@@ -208,8 +210,13 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 edit_layout.addWidget(btn_refresh)
 
             lyt.addLayout(edit_layout)
-            self.param_widgets[p['name']] = edit
             self.layout_params.addWidget(container)
+
+        # 5. Finalización del layout
+        self.layout_params.addStretch()
+
+        # Ajustar el contenido interno pero permitir que el usuario redimensione la ventana
+        self.scrollAreaWidgetContents.adjustSize()
 
     def refresh_dependent_combo(self, combo_widget, layer, dependencies):
         """

@@ -4,7 +4,7 @@ provincias:
   parametros:
     - { name: "id", label: "id", default: "" }
     - { name: "nombre", label: "nombre" }
-    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ] }
+    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
     - { name: "max", label: "max", default: "24" }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
@@ -16,7 +16,7 @@ departamentos:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
 aglomerados:
@@ -25,7 +25,7 @@ aglomerados:
   parametros:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
-    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ] }
+    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
     - { name: "max", label: "max", default: "120" }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
@@ -37,7 +37,7 @@ fracciones-censales:
     - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
 radios-censales:
@@ -49,7 +49,7 @@ radios-censales:
     - { name: "fraccion_censal", label: "fraccion censal", default: "", options: "fracciones-censales", dependency: [ "departamento" ] }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
 gobiernos-locales:
@@ -60,7 +60,7 @@ gobiernos-locales:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "categoria", label: "categoria", default: "", options: [ "Comisión de Fomento", "Comisión Municipal", "Comuna", "Comuna Rural", "Delegación Municipal", "Junta de Gobierno", "Municipio" ] }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
@@ -74,8 +74,8 @@ localidades-censales:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ], visible: false }
 
 asentamientos:
   titulo: "Asentamientos"
@@ -87,9 +87,9 @@ asentamientos:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "categoria", label: "categoria", default: "", options: [ "Base Antártica", "Componente de localidad compuesta", "Entidad", "Localidad simple", "ParajeBase Antártica", "Componente de localidad compuesta", "Entidad", "Localidad simple", "Paraje" ] }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
 
 localidades:
   titulo: "Localidades"
@@ -102,8 +102,8 @@ localidades:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
 
 calles:
   titulo: "Calles"
@@ -116,8 +116,8 @@ calles:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "lineas", options: [ "lineas" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "lineas", options: [ "lineas" ], visible: false }
 
 direcciones:
   titulo: "Direcciones"
@@ -130,9 +130,9 @@ direcciones:
     - { name: "direccion", label: "direccion", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
     - { name: "desplazar", label: "desplazar", default: "False", options: [ "True", "False" ] }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
-    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
+    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ], visible: false }
 
 ubicacion:
   titulo: "Ubicación por punto"
@@ -140,7 +140,7 @@ ubicacion:
   parametros:
     - { name: "lat", label: "Latitud", default: "" }
     - { name: "lon", label: "Longitud", default: "" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"] }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ] }
-    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ] }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
+    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ], visible: false }
 
