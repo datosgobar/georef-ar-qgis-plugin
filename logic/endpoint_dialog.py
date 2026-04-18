@@ -430,6 +430,18 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             with open(path, 'wb') as f:
                 f.write(response.content)
 
+            check_layer = QgsVectorLayer(path, "check", "ogr")
+            if not check_layer.isValid() or check_layer.featureCount() == 0:
+                self.iface.messageBar().pushMessage(
+                    "Consulta sin resultados",
+                    "El archivo generado no contiene registros válidos.",
+                    level=Qgis.Info,
+                    duration=5
+                )
+                if os.path.exists(path):
+                    os.remove(path)
+                return
+
             self.load_layer(path, layer_name)
 
         except ValueError as e:
