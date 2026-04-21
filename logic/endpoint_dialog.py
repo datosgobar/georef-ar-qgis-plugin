@@ -156,7 +156,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             if is_boolean:
                 edit = QtWidgets.QCheckBox()
                 # Convertimos el string 'verdadero'/'falso' del YAML a booleano real
-                default_val = str(p.get('default', 'falso')).lower() == 'verdadero' or p.get('default') is True
+                default_val = str(p.get('default', 'false')).lower() == 'true' or p.get('default') is True
                 edit.setChecked(default_val)
             elif opt_config:
                 edit = QtWidgets.QComboBox()
@@ -342,7 +342,13 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         query = []  # Default
         for name, widget in self.param_widgets.items():
-            val = widget.currentText().strip() if isinstance(widget, QtWidgets.QComboBox) else widget.text().strip()
+
+            val = None
+
+            if isinstance(widget, QtWidgets.QCheckBox) and not (val := widget.isChecked()):
+                continue
+
+            val = val or widget.currentText().strip() if isinstance(widget, QtWidgets.QComboBox) else widget.text().strip()
 
             if not val:
                 continue
