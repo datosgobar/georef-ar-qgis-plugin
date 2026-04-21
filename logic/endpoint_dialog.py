@@ -470,6 +470,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         try:
             vlayer = QgsVectorLayer(path, title, "ogr")
             if vlayer and vlayer.isValid():
+                vlayer.setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
                 QgsProject.instance().addMapLayer(vlayer)
                 self.iface.mapCanvas().setExtent(vlayer.extent())
             else:
