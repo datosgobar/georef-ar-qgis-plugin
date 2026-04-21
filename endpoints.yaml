@@ -136,12 +136,11 @@ direcciones:
     - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ], visible: false }
 
 ubicacion:
-  titulo: "Ubicación por punto"
+  titulo: "Ubicación"
   url_path: "/ubicacion"
   parametros:
     - { name: "lat", label: "Latitud", default: "" }
     - { name: "lon", label: "Longitud", default: "" }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
-    - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ], visible: false }
+
 

@@ -114,12 +114,12 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # Transformar el punto capturado
             punto_wgs84 = transformacion.transform(point)
 
-            # 3. Cargar los valores transformados en los campos
-            # Usamos punto_wgs84.y() para Latitud y .x() para Longitud
-            if 'lat' in self.param_widgets:
-                self.param_widgets['lat'].setText(f"{punto_wgs84.y():.6f}")
-            if 'lon' in self.param_widgets:
-                self.param_widgets['lon'].setText(f"{punto_wgs84.x():.6f}")
+            # Buscamos en el diccionario general o en las variables específicas
+            lat_w = self.param_widgets.get('lat')
+            lon_w = self.param_widgets.get('lon')
+
+            if lat_w: lat_w.setText(f"{punto_wgs84.y():.6f}")
+            if lon_w: lon_w.setText(f"{punto_wgs84.x():.6f}")
 
         except Exception as e:
             self.iface.messageBar().pushMessage(
@@ -174,6 +174,9 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # 2. GUARDAR SIEMPRE en el diccionario (aunque sea invisible)
             self.param_widgets[p['name']] = edit
 
+            if key in ['ubicacion']:
+                continue
+
             # 3. VERIFICAR VISIBILIDAD
             # Si 'visible' es False en el YAML, ocultamos el widget y saltamos la creación del layout
             if not p.get('visible', True):
@@ -225,6 +228,17 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
             lyt.addLayout(edit_layout)
             self.layout_params.addWidget(container)
+
+        if key in ['ubicacion']:
+            self.check_full_download.setVisible(False)
+            self.mFileWidget.setVisible(False)
+            self.label_out.setVisible(False)
+            self.setup_ubicacion_ui()
+            return
+
+        self.check_full_download.setVisible(True)
+        self.mFileWidget.setVisible(True)
+        self.label_out.setVisible(True)
 
         # 5. Finalización del layout
         self.layout_params.addStretch()
@@ -489,12 +503,46 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
+    def query_location_info(self):
+        """Consulta la API y llena los campos de resultados."""
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+        try:
+            url = self.build_endpoint_query('ubicacion')
+            response = self.query(url, timeout=10)
+            data = response.json()
+
+            res = data.get('ubicacion', {})
+
+            # Limpiamos resultados previos
+            for w in self.res_widgets.values(): w.clear()
+
+            # Mapeo de la respuesta al widget
+            # La API de Georef devuelve objetos para prov/depto/etc.
+            if res:
+                self.res_widgets['calle'].setText(res.get('calle', {}).get('nombre', ''))
+                self.res_widgets['numero'].setText(str(res.get('calle', {}).get('altura', '')))
+                self.res_widgets['gobierno_local'].setText(res.get('gobierno_local', {}).get('nombre', ''))
+                self.res_widgets['departamento'].setText(res.get('departamento', {}).get('nombre', ''))
+                self.res_widgets['provincia'].setText(res.get('provincia', {}).get('nombre', ''))
+                self.res_widgets['nomenclatura'].setText(res.get('nomenclatura', ''))
+            else:
+                self.iface.messageBar().pushMessage("Georef", "Sin datos en esa coordenada", level=Qgis.Info)
+
+        except Exception as e:
+            self.iface.messageBar().pushMessage("Error", str(e), level=Qgis.Critical)
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
+
     def run_process(self):
         """
         Encapsula la lógica de descarga y carga.
         Retorna True si el proceso finalizó correctamente.
         """
         layer_name = self.comboBox_endpoints.currentData()
+
+        if layer_name == 'ubicacion':
+            self.query_location_info()
+            return False
 
         try:
             if self.check_full_download.isChecked():
@@ -515,3 +563,71 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # Importante: Quitamos el super().accept() de load_layer
             # para que sea esta función quien controle el cierre.
             super(EndpointDialog, self).accept()
+
+    def setup_ubicacion_ui(self):
+        """Configura la interfaz específica para el endpoint de ubicación."""
+        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
+        container_in = QtWidgets.QWidget()
+        lyt_in = QtWidgets.QHBoxLayout(container_in)
+        lyt_in.setContentsMargins(0, 5, 0, 5)
+
+        lbl_in = QtWidgets.QLabel("Coordenadas:")
+        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
+
+        self.edit_lat = QtWidgets.QLineEdit()
+        self.edit_lat.setPlaceholderText("Latitud")
+        self.edit_lon = QtWidgets.QLineEdit()
+        self.edit_lon.setPlaceholderText("Longitud")
+
+        self.param_widgets['lat'] = self.edit_lat
+        self.param_widgets['lon'] = self.edit_lon
+
+        btn_map = QtWidgets.QPushButton()
+        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
+        btn_map.setFixedSize(28, 28)
+        btn_map.clicked.connect(self.activate_map_tool)
+
+        lyt_in.addWidget(lbl_in)
+        lyt_in.addWidget(self.edit_lat)
+        lyt_in.addWidget(self.edit_lon)
+        lyt_in.addWidget(btn_map)
+
+        self.layout_params.addWidget(container_in)
+
+        # --- SEPARADOR ---
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.layout_params.addWidget(line)
+
+        # --- SECCIÓN DE RESULTADOS ---
+        self.res_widgets = {}
+        campos_res = [
+            ('calle', 'Calle:'),
+            ('numero', 'Numero:'),
+            ('gobierno_local', 'Gobierno Local:'),
+            ('departamento', 'Departamento:'),
+            ('provincia', 'Provincia:'),
+            ('nomenclatura', 'Nomenclatura:')
+        ]
+
+        for key_res, label_text in campos_res:
+            container_res = QtWidgets.QWidget()
+            lyt_res = QtWidgets.QHBoxLayout(container_res)
+            lyt_res.setContentsMargins(0, 2, 0, 2)
+
+            lbl = QtWidgets.QLabel(label_text)
+            lbl.setFixedWidth(128)
+
+            edit = QtWidgets.QLineEdit()
+            edit.setReadOnly(True)
+            # Estilo visual para indicar que es solo lectura
+            edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
+
+            lyt_res.addWidget(lbl)
+            lyt_res.addWidget(edit)
+            self.res_widgets[key_res] = edit
+            self.layout_params.addWidget(container_res)
+
+        self.layout_params.addStretch()
+        self.scrollAreaWidgetContents.adjustSize()
