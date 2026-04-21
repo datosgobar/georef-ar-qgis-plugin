@@ -92,7 +92,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def activate_map_tool(self):
         """Activa la herramienta para capturar el clic en el lienzo."""
-        self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
+        # self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
+        self.hide()
         self.map_tool = PointTool(self.iface.mapCanvas(), self.on_map_clicked)
         self.iface.mapCanvas().setMapTool(self.map_tool)
 
@@ -114,6 +115,10 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # Transformar el punto capturado
             punto_wgs84 = transformacion.transform(point)
 
+            if hasattr(self, 'res_widgets'):
+                for widget in self.res_widgets.values():
+                    widget.clear()
+
             # Buscamos en el diccionario general o en las variables específicas
             lat_w = self.param_widgets.get('lat')
             lon_w = self.param_widgets.get('lon')
@@ -132,6 +137,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setWindowState(QtCore.Qt.WindowActive)
         self.show()
         self.raise_()
+        self.activateWindow()
 
     def load_params(self):
 
