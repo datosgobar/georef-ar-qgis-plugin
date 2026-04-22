@@ -130,7 +130,7 @@ direcciones:
     - { name: "localidad", label: "localidad", default: "", options: "localidades", dependency: [ "departamento" ] }
     - { name: "direccion", label: "direccion", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "desplazar", label: "desplazar", default: "False", options: [ "True", "False" ] }
+    - { name: "desplazar", label: "desplazar a la manzana", default: "False", options: [ "True", "False" ] }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
     - { name: "aplanar", label: "aplanar", default: "True", options: [ "True" ], visible: false }
