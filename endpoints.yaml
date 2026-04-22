@@ -106,7 +106,7 @@ localidades:
     - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
 
 calles:
-  titulo: "Calles"
+  titulo: "Vias de circulacion"
   url_path: "/calles"
   parametros:
     - { name: "provincia", label: "provincia", default: "", options: "provincias" }
@@ -116,7 +116,7 @@ calles:
     - { name: "nombre", label: "nombre" }
     - { name: "id", label: "id", default: "" }
     - { name: "max", label: "cantidad", default: "10" }
-    - { name: "categoria", label: "categoria", default: "", options: ["0", "101", "330", "1015", "301050", "ACC", "AUT", "AV", "BV", "CALLE", "CJON", "CURSO DE AGUA", "HUELLA", "LIMITE DE PROPIEDAD", "LINEA FERREA", "LINEA IMAGINARIA", "PASILLO", "PASAJE", "PEATONAL", "RUTA", "SENDERO", "TIPO"] }
+    - { name: "categoria", label: "categoria", default: "", options: ["Autopista", "Avenida", "Boulevard", "Calle", "Pasillo", "Pasaje", "Peatonal", "Ruta"] }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "lineas", options: [ "lineas" ], visible: false }
 

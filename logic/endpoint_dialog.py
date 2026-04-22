@@ -21,6 +21,17 @@ API_FORMATS = {
     'lineas': 'gpkg'
 }
 
+TRANSLATE = {
+    "Autopista": "AUT",
+    "Avenida": "AV",
+    "Boulevard": "BV",
+    "Calle": "CALLE",
+    "Pasillo": "PASILLO",
+    "Pasaje": "PASAJE",
+    "Peatonal": "PEATONAL",
+    "Ruta": "RUTA"
+}
+
 from qgis.gui import QgsMapToolEmitPoint
 
 class PointTool(QgsMapToolEmitPoint):
@@ -377,6 +388,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 name = "formato"
                 val = self._get_param_format()
 
+            name = TRANSLATE.get(name, name)
             query.append(f"{name}={val}")
 
         if query:
