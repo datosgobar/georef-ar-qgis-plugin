@@ -19,39 +19,6 @@ departamentos:
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
-aglomerados:
-  titulo: "Aglomerados"
-  url_path: "/aglomerados"
-  parametros:
-    - { name: "nombre", label: "nombre" }
-    - { name: "id", label: "id", default: "" }
-    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
-    - { name: "max", label: "max", default: "120" }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-
-fracciones-censales:
-  titulo: "Fracciones censales"
-  url_path: "/fracciones-censales"
-  parametros:
-    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
-    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
-    - { name: "id", label: "id", default: "" }
-    - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-
-radios-censales:
-  titulo: "Radios censales"
-  url_path: "/radios-censales"
-  parametros:
-    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
-    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
-    - { name: "fraccion_censal", label: "fraccion censal", default: "", options: "fracciones-censales", dependency: [ "departamento" ] }
-    - { name: "id", label: "id", default: "" }
-    - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-
 gobiernos-locales:
   titulo: "Gobiernos locales"
   url_path: "/gobiernos-locales"
@@ -63,19 +30,6 @@ gobiernos-locales:
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "categoria", label: "categoria", default: "", options: [ "Comisión de Fomento", "Comisión Municipal", "Comuna", "Comuna Rural", "Delegación Municipal", "Junta de Gobierno", "Municipio" ] }
     - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-
-localidades-censales:
-  titulo: "Localidades censales"
-  url_path: "/localidades-censales"
-  parametros:
-    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
-    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
-    - { name: "gobierno_local", label: "gobierno local", default: "", options: "gobiernos-locales", dependency: [ "provincia" ] }
-    - { name: "nombre", label: "nombre" }
-    - { name: "id", label: "id", default: "" }
-    - { name: "max", label: "cantidad", default: "10" }
-    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ], visible: false }
 
 asentamientos:
   titulo: "Asentamientos"
@@ -104,6 +58,52 @@ localidades:
     - { name: "max", label: "cantidad", default: "10" }
     - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
+
+aglomerados:
+  titulo: "Aglomerados"
+  url_path: "/aglomerados"
+  parametros:
+    - { name: "nombre", label: "nombre" }
+    - { name: "id", label: "id", default: "" }
+    - { name: "campos", label: "campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
+    - { name: "max", label: "max", default: "120" }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+localidades-censales:
+  titulo: "Localidades censales"
+  url_path: "/localidades-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "gobierno_local", label: "gobierno local", default: "", options: "gobiernos-locales", dependency: [ "provincia" ] }
+    - { name: "nombre", label: "nombre" }
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ], visible: false }
+
+fracciones-censales:
+  titulo: "Fracciones censales"
+  url_path: "/fracciones-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
+
+radios-censales:
+  titulo: "Radios censales"
+  url_path: "/radios-censales"
+  parametros:
+    - { name: "provincia", label: "provincia", default: "", options: "provincias" }
+    - { name: "departamento", label: "departamento", default: "", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "fraccion_censal", label: "fraccion censal", default: "", options: "fracciones-censales", dependency: [ "departamento" ] }
+    - { name: "id", label: "id", default: "" }
+    - { name: "max", label: "cantidad", default: "10" }
+    - { name: "campos", label: "campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - { name: "geometria", label: "geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
 
 calles:
   titulo: "Vias de circulacion"
