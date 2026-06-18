@@ -23,6 +23,7 @@
  This script initializes the plugin, making it known to QGIS.
 """
 import os
+import yaml
 
 
 # noinspection PyPep8Naming

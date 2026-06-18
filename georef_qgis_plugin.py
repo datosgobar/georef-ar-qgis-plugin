@@ -25,7 +25,6 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
-from qgis._core import QgsVectorLayer, QgsProject
 
 from .logic.about_dialog import AboutDialog
 from .logic.settings_dialog import SettingsDialog
@@ -51,14 +50,15 @@ class GeorefQgisPlugin:
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = QSettings().value('locale/userLocale')
+        locale = locale[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
             'GeorefArApi_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
-            self.translator = QTranslator()
+            self.translator = QTranslator(QCoreApplication.instance())
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
 
@@ -85,7 +85,7 @@ class GeorefQgisPlugin:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('GeorefArApi', message)
+        return QtCore.QCoreApplication.translate('EndpointDialogBase', message)
 
 
     def add_action(
@@ -168,19 +168,19 @@ class GeorefQgisPlugin:
         # 1. Crear las acciones
         self.action_endpoint = QAction(
             QIcon(icon_path),
-            self.tr(u'Endpoints'),
+            self.tr('Endpoints'),
             self.iface.mainWindow()
         )
         self.action_endpoint.triggered.connect(self.endpoint_callback)
 
         self.action_settings = QAction(
-            self.tr(u'Settings'),
+            self.tr('Settings'),
             self.iface.mainWindow()
         )
         self.action_settings.triggered.connect(self.settings_callback)
 
         self.action_about = QAction(
-            self.tr(u'About'),
+            self.tr('About'),
             self.iface.mainWindow()
         )
         self.action_about.triggered.connect(self.about_callback)
@@ -192,13 +192,13 @@ class GeorefQgisPlugin:
         # Esto evita que se cree el menú repetido si recargas
         self.q_menu = None
         for action in plugins_menu.actions():
-            if action.menu() and action.menu().title() == self.tr(u'Georef Ar Api'):
+            if action.menu() and action.menu().title() == self.tr('Georef AR API'):
                 self.q_menu = action.menu()
                 break
 
         if not self.q_menu:
             # Si no existe, lo creamos y lo añadimos al menú de Complementos
-            self.q_menu = QMenu(self.tr(u'Georef Ar Api'), plugins_menu)
+            self.q_menu = QMenu(self.tr('Georef AR API'), plugins_menu)
             plugins_menu.addMenu(self.q_menu)
 
         # 4. Limpiar el menú antes de agregar (por si es una recarga)
@@ -228,13 +228,10 @@ class GeorefQgisPlugin:
         self.dlg.show()
         self.dlg.exec_()
 
-
     def settings_callback(self):
         self.dlg = SettingsDialog()
         self.dlg.show()
         self.dlg.exec_()
-
-
 
     def about_callback(self):
         self.dlg = AboutDialog(self.iface.mainWindow())

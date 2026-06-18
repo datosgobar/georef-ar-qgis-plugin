@@ -6,24 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>200</height>
+    <width>500</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Configuración - Georef AR</string>
+   <string>Settings - Georef AR</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>API de Georef-Ar</string>
+      <string>Georef-Ar API</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="spacing">
+       <number>8</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>URL Base:</string>
+         <string>Base URL:</string>
         </property>
        </widget>
       </item>
@@ -37,7 +55,7 @@
       <item row="0" column="2">
        <widget class="QPushButton" name="btn_test_api">
         <property name="text">
-         <string>Probar</string>
+         <string>Test</string>
         </property>
        </widget>
       </item>
@@ -62,7 +80,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>10</height>
       </size>
      </property>
     </spacer>
@@ -76,39 +94,18 @@
    </item>
   </layout>
  </widget>
- <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>SettingsDialogBase</receiver>
    <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>239</x>
-     <y>177</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>239</x>
-     <y>99</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>SettingsDialogBase</receiver>
    <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>239</x>
-     <y>177</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>239</x>
-     <y>99</y>
-    </hint>
-   </hints>
   </connection>
  </connections>
 </ui>

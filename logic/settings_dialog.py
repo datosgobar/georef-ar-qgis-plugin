@@ -15,7 +15,7 @@ class SettingsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.settings = QgsSettings()
 
-        url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.0")
+        url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.1")
         self.lineEdit_url.setText(url)
 
         self.btn_test_api.clicked.connect(self.test_connection)
