@@ -4,13 +4,13 @@ import tempfile
 from functools import lru_cache
 
 import requests
+import yaml
 from qgis.PyQt import uic, QtWidgets, QtCore
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
 
-from . import get_endpoints_config
 from .utils import PointTool
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'endpoint_dialog.ui')
@@ -34,6 +34,10 @@ TRANSLATE = {
     "Ruta": "RUTA"
 }
 
+def get_endpoints_config():
+    yaml_path = os.path.join(os.path.dirname(__file__), '..', 'endpoints.yaml')
+    with open(yaml_path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
 
 class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
