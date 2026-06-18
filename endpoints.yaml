@@ -120,21 +120,6 @@ calles:
     - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
     - { name: "geometria", label: "Geometría", default: "lineas", options: [ "lineas" ], visible: false }
 
-cuadras:
-  title: "Cuadras"
-  url_path: "/cuadras"
-  params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependency: [ "departamento" ] }
-    - { name: "localidad", label: "Localidad", options: "localidades", dependency: [ "departamento" ] }
-    - { name: "calle", label: "Calle" }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad", default: "10" }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "Geometría", default: "lineas", options: [ "lineas" ], visible: false }
-
 direcciones:
   title: "Direcciones"
   url_path: "/direcciones"
