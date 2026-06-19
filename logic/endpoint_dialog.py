@@ -4,14 +4,16 @@ import tempfile
 from functools import lru_cache
 
 import requests
-import yaml
+from PyQt5.QtWidgets import QVBoxLayout
 from qgis.PyQt import uic, QtWidgets, QtCore
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
+from sphinx.environment.collectors import dependencies
 
-from .utils import PointTool
+from .utils import PointTool, get_endpoints_config
+from .. import strings
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'endpoint_dialog.ui')
 FORM_CLASS, _ = uic.loadUiType(ui_path)
@@ -58,37 +60,78 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.iface = iface
         self.settings = QgsSettings()
         self.param_widgets_dict = {}
-
+        self.param_dependencies_dict = {}
         self.endpoints_config = get_endpoints_config()
 
-        for key, info in self.endpoints_config.items():
-            if key in self._get_enabled_endpoints():
-                self.comboBox_endpoints.addItem(self.tr(info['title']), key)
-        self.comboBox_endpoints.currentIndexChanged.connect(self._load_endpoint_params)
+        self.set_dialog_description(None)
+        self._render_layer_combo_box()
+        self._render_layer()
 
-        self.checkBox_full_download = QtWidgets.QCheckBox(self.tr("Download complete file (without filters)"))
-        self.checkBox_full_download.setStyleSheet("margin-left: 5px; font-weight: bold;")
-        self.verticalLayout.insertWidget(1, self.checkBox_full_download)
+    def set_dialog_description(self, description):
+        """
+            Configura la descripción que tendrá el diálogo para informar al usuario.
+
+        :param description: Un str con la descripción del diálogo
+        """
+        if hasattr(self, 'dialog_description'):
+            self.dialog_description.setText(description)
+
+    def get_enabled_endpoints(self):
+        """
+            Determina que endpoints de los especificados en el archivo de configuración estarán disponibles para este
+            diálogo.
+
+        :return: Un diccionario filtrado
+        """
+        return {k: self.endpoints_config[k] for k in ENDPOINTS if k in self.endpoints_config}
+
+    def _render_layer_combo_box(self):
+        """
+            Renderiza el layout del selector de endpoints
+        """
+        for key, info in self.get_enabled_endpoints().items():
+            self.comboBox_endpoints.addItem(self.tr(info['title']), key)
+        self.comboBox_endpoints.currentIndexChanged.connect(self._render_layer)
+
+    def _render_layer(self):
+        self._render_layout_download()
+        self._render_layout_params()
+        self._render_layout_response()
+        self._render_layout_file()
+        self._render_layout_buttons()
+
+    def _render_layout_download(self):
+        """
+            Renderiza el layout que permite al usuario la descarga del recurso completo para el endpoint actual
+        """
+        key = self.comboBox_endpoints.currentData()
+        self.checkBox_full_download.setVisible(self.endpoints_config.get(key).get('full_download', True))
+        self.checkBox_full_download.stateChanged.connect(self._on_full_download_changed)
+
+    def _on_full_download_changed(self, state):
+        # Evaluamos el estado usando las constantes de Qt
+        if state == QtCore.Qt.Checked:
+            self.scrollArea.setEnabled(False)
+        else:
+            self.scrollArea.setEnabled(True)
+
+    @property
+    def current_layer(self):
+        """
+            Propiedad que contiene el nombre del endpoint actual
+
+        :return: Un str con el nombre del endpoint actual seleccionado
+        """
+        return self.comboBox_endpoints.currentData()
+
+    def _render_layout_params(self):
+        """
+            Renderiza los parámetros de consulta definidos en el archivo de configuración bajo la llave params.
+        """
+
+        self.container_params = QtWidgets.QWidget()
 
         self.layout_params.setAlignment(QtCore.Qt.AlignTop)
-
-        self.mFileWidget.setStorageMode(self.mFileWidget.SaveFile)
-        self.mFileWidget.setFilter("GeoJSON (*.geojson);;CSV (*.csv);;JSON (*.json);;NDJSON (*.ndjson)")
-        self.mFileWidget.lineEdit().setPlaceholderText(self.tr("[Create temporal layer]"))
-
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self.run_process)
-
-        self._load_endpoint_params()
-
-    def _get_enabled_endpoints(self):
-        return ENDPOINTS
-
-    def _load_endpoint_params(self):
-        """
-            Método para generar y cargar los parámetros de la capa cada vez que se selecciona un nuevo endpoint.
-
-        :return:
-        """
 
         # Limpiar layout de forma agresiva
         while self.layout_params.count():
@@ -99,165 +142,147 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 widget.deleteLater()
 
         self.param_widgets_dict.clear()
-        key = self.comboBox_endpoints.currentData()
-        self.checkBox_full_download.setVisible(self.endpoints_config.get(key).get('full_download', True))
+        self.param_dependencies_dict.clear()
 
-        tmp_layer = self.endpoints_config.get(key).get('tmp_layer', True)
+        for param in self.endpoints_config[self.current_layer].get('params', []):
+            name = param.get('name')
+            options = param.get('options', None)
+            default = param.get('default', None)
+            visible = param.get('visible', True)
+            dependencies = param.get('dependencies', [])
+            label = self.tr(param['label'])
+
+            container = QtWidgets.QWidget()
+            parent_layout = QtWidgets.QHBoxLayout(container)
+            parent_layout.setContentsMargins(5, 5, 5, 5)
+            parent_layout.setSpacing(10)
+
+            lbl = QtWidgets.QLabel(label)
+            lbl.setFixedWidth(128)
+
+            if isinstance(default, bool):
+                qw = QtWidgets.QCheckBox()
+                qw.setChecked(param.get('default', None))
+                qw.setText(param['label'])
+                parent_layout.addWidget(qw)
+
+            elif options:
+                parent_layout.addWidget(lbl)
+
+                qw = QtWidgets.QComboBox()
+                qw.setEditable(True)
+                parent_layout.addWidget(qw)
+
+            else:
+                parent_layout.addWidget(lbl)
+
+                qw = QtWidgets.QLineEdit()
+                qw.setText(default)
+                parent_layout.addWidget(qw)
+
+            self.param_widgets_dict[name] = qw
+            self.layout_params.addWidget(container)
+
+            if not visible:
+                container.setVisible(False)
+
+        self._update_dependencies()
+
+        self.layout_params.addStretch()
+        self.scrollAreaWidgetContents.adjustSize()
+
+    def _update_dependencies(self):
+        """
+        Analiza las dependencias declaradas en el archivo de configuración
+        y conecta los eventos necesarios para actualizaciones en cascada.
+        """
+        for param in self.endpoints_config[self.current_layer].get('params', []):
+            options = param.get('options', None)
+            name = param.get('name')
+            qw = self.param_widgets_dict.get(name)
+
+            if not options or not isinstance(qw, QtWidgets.QComboBox):
+                continue
+
+            default = param.get('default', '')
+
+            if isinstance(options, list):
+                qw.addItems(options)
+                qw.setEditText(default)
+                continue
+
+            dependencies = param.get('dependencies', [])
+            if not dependencies:
+                values = self._fetch_values(options, [])
+                qw.clear()
+                qw.addItems(values)
+                qw.setEditText(default)
+                continue
+
+            for dep_name in dependencies:
+                parent_qw = self.param_widgets_dict.get(dep_name)
+                if parent_qw is not None:
+                    parent_qw.currentIndexChanged.connect(
+                        lambda _, h=qw, l=options, d=dependencies: self._refresh_dependent_combo(h, l, d)
+                    )
+
+    def _refresh_dependent_combo(self, combo_widget, endpoint, dependencies):
+        """
+        Actualiza dinámicamente un QComboBox basándose en los valores
+        seleccionados actualmente en sus widgets padres/dependencias.
+        """
+        # 1. Bloquear señales para evitar bucles infinitos durante el vaciado/llenado
+        combo_widget.blockSignals(True)
+        combo_widget.clear()
+
+        filters = ["max=500", "campos=basico"]
+        for dep_name in dependencies or []:
+            dep_widget = self.param_widgets_dict.get(dep_name)
+            if dep_widget:
+                val = dep_widget.currentText().strip() if isinstance(dep_widget,
+                                                                     QtWidgets.QComboBox) else dep_widget.text().strip()
+                if val:
+                    filters.append(f"{dep_name}={val}")
+
+        values = self._fetch_values(endpoint, filters)
+        if values:
+            combo_widget.addItems(values)
+            combo_widget.setEditText("")
+
+        QtWidgets.QApplication.restoreOverrideCursor()
+        combo_widget.blockSignals(False)
+        combo_widget.currentIndexChanged.emit(combo_widget.currentIndex())
+
+    def _render_layout_response(self):
+        pass
+
+    def _render_layout_file(self):
+        self.mFileWidget.setStorageMode(self.mFileWidget.SaveFile)
+        self.mFileWidget.setFilter("GeoJSON (*.geojson);;CSV (*.csv);;JSON (*.json);;NDJSON (*.ndjson)")
+        self.mFileWidget.lineEdit().setPlaceholderText(self.tr("[Create temporal layer]"))
+
+        tmp_layer = self.endpoints_config.get(self.current_layer).get('tmp_layer', True)
         self.mFileWidget.setVisible(tmp_layer)
         self.label_out.setVisible(tmp_layer)
 
-        params = self.endpoints_config[key].get('params', [])
+    def _render_layout_buttons(self):
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self.run_process)
 
-        for param in params:
-            options = param.get('options', None)
-
-            is_boolean = isinstance(param.get('default', None), bool)
-            if is_boolean:
-                qw = QtWidgets.QCheckBox()
-                qw.setChecked(param.get('default'))
-            elif options:
-                qw = QtWidgets.QComboBox()
-                qw.setEditable(True)
-                values = []
-                if options == "provincias":
-                    values = self._fetch_values(options, params)
-                elif isinstance(options, list):
-                    values = options
-                qw.addItems(values)
-                qw.setEditText(str(param.get('default', '')))
-            else:
-                qw = QtWidgets.QLineEdit(str(param.get('default', '')))
-
-            self.param_widgets_dict[param['name']] = qw
-
-            if key in ['ubicacion', 'establecimientos-cercanos']:
-                continue
-
-            if not param.get('visible', True):
-                qw.setVisible(False)
-                continue
-
-            container = QtWidgets.QWidget()
-            lyt = QtWidgets.QHBoxLayout(container)
-            lyt.setContentsMargins(0, 5, 0, 5)
-            lyt.setSpacing(10)
-
-            lbl = QtWidgets.QLabel(self.tr(param['label']))
-            lbl.setFixedWidth(128)
-            lyt.addWidget(lbl)
-
-            edit_layout = QtWidgets.QHBoxLayout()
-            edit_layout.setContentsMargins(0, 0, 0, 0)
-            edit_layout.setSpacing(2)
-            edit_layout.addWidget(qw)
-
-            if is_boolean:
-                qw.setText(param['label'])
-                lbl.setVisible(False)
-
-            if 'dependency' in param and isinstance(options, str):
-                btn_refresh = QtWidgets.QPushButton()
-                icon = self.style().standardIcon(QtWidgets.QStyle.SP_BrowserReload)
-                btn_refresh.setIcon(icon)
-                btn_refresh.setFixedSize(28, 28)
-                btn_refresh.setToolTip(f"Actualizar basado en: {', '.join(param['dependency'])}")
-                btn_refresh.clicked.connect(
-                    lambda chk=False, w=qw, target=options, deps=param['dependency']:
-                    self._refresh_dependent_combo(w, target, deps)
-                )
-                edit_layout.addWidget(btn_refresh)
-
-            lyt.addLayout(edit_layout)
-            self.layout_params.addWidget(container)
-
-        if self.endpoints_config.get(key).get('reverse_georef', False):
-            self._setup_location_ui()
-
-        self.layout_params.addStretch()
-        self.scrollAreaWidgetContents.adjustSize()
-
-    def _setup_location_ui(self):
-        """Configura la interfaz específica para el endpoint de ubicación."""
-        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
-        container_in = QtWidgets.QWidget()
-        lyt_in = QtWidgets.QHBoxLayout(container_in)
-        lyt_in.setContentsMargins(0, 5, 0, 5)
-
-        lbl_in = QtWidgets.QLabel(self.tr("Coordinates:"))
-        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
-
-        self.edit_lat = QtWidgets.QLineEdit()
-        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
-        self.edit_lon = QtWidgets.QLineEdit()
-        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
-
-        self.param_widgets_dict['lat'] = self.edit_lat
-        self.param_widgets_dict['lon'] = self.edit_lon
-
-        btn_map = QtWidgets.QPushButton()
-        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
-        btn_map.setFixedSize(28, 28)
-        btn_map.clicked.connect(self._activate_map_tool)
-
-        lyt_in.addWidget(lbl_in)
-        lyt_in.addWidget(self.edit_lat)
-        lyt_in.addWidget(self.edit_lon)
-        lyt_in.addWidget(btn_map)
-
-        self.layout_params.addWidget(container_in)
-
-        # --- SEPARADOR ---
-        line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.layout_params.addWidget(line)
-
-        # --- SECCIÓN DE RESULTADOS ---
-        self.res_widgets = {}
-        campos_res = [
-            ('calle', self.tr('Street:')),
-            ('numero', self.tr('Number:')),
-            ('gobierno_local', self.tr('Local Government:')),
-            ('departamento', self.tr('Department:')),
-            ('provincia', self.tr('Province:')),
-            ('nomenclatura', self.tr('Nomenclature:'))
-        ]
-
-        for key_res, label_text in campos_res:
-            container_res = QtWidgets.QWidget()
-            lyt_res = QtWidgets.QHBoxLayout(container_res)
-            lyt_res.setContentsMargins(0, 2, 0, 2)
-
-            lbl = QtWidgets.QLabel(label_text)
-            lbl.setFixedWidth(128)
-
-            edit = QtWidgets.QLineEdit()
-            edit.setReadOnly(True)
-            # Estilo visual para indicar que es solo lectura
-            edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
-
-            lyt_res.addWidget(lbl)
-            lyt_res.addWidget(edit)
-            self.res_widgets[key_res] = edit
-            self.layout_params.addWidget(container_res)
-
-        self.layout_params.addStretch()
-        self.scrollAreaWidgetContents.adjustSize()
-
-
-    def _fetch_values(self, layer, params):
+    def _fetch_values(self, endpoint, params):
 
         base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
-        url = f"{base_url}/{layer}?campos=basico"
+        url = f"{base_url}/{endpoint}?{'&'.join(params)}"
 
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
 
         try:
+            print(url)
             r = self._query(url)
             data = json.loads(r.text)
-            key = layer.replace("-", "_")
+            key = endpoint.replace("-", "_")
             items = data.get(key, [])
-            sorted_data = sorted([item["nombre"] for item in items])
+            # sorted_data = sorted([item["nombre"] for item in items])
+            sorted_data = sorted(list(set(item["nombre"] for item in items if item.get("nombre"))))
         except:
             sorted_data = []
         finally:
@@ -314,60 +339,9 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.raise_()
         self.activateWindow()
 
-    def _refresh_dependent_combo(self, combo_widget, layer, dependencies):
-        """
-        Actualiza un QComboBox basándose en el valor de otros widgets.
-        """
-        filters = []
-        for dep_name in dependencies:
-            dep_widget = self.param_widgets_dict.get(dep_name)
-            if dep_widget:
-                # Obtenemos el texto sin importar si es combo o lineedit
-                val = dep_widget.currentText().strip() if isinstance(dep_widget,
-                                                                     QtWidgets.QComboBox) else dep_widget.text().strip()
-                if val:
-                    filters.append(f"{dep_name}={val}")
-
-        if not filters:
-            self.iface.messageBar().pushMessage("Aviso", "Complete los campos de dependencia primero", level=Qgis.Info)
-            return
-
-        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.1").rstrip('/')
-        url = f"{base_url}/{layer}?{'&'.join(filters)}&campos=basico&max=500"
-
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-        try:
-            r = self._query(url)
-            r.raise_for_status()
-            data = r.json()
-
-            # Extraemos los nombres
-            key = layer.replace("-", "_")
-            items = data.get(key, [])
-
-            param_key = 'nombre'
-            if key == 'fracciones_censales':
-                param_key = 'id'
-
-            new_values = sorted([item[param_key] for item in items])
-
-            if new_values:
-                combo_widget.clear()
-                combo_widget.addItems(new_values)
-                # Abrimos el desplegable automáticamente para mostrar los resultados
-                combo_widget.showPopup()
-            else:
-                self.iface.messageBar().pushMessage("Georef", f"No se encontraron resultados para ese filtro: {url}",
-                                                    level=Qgis.Warning)
-
-        except Exception as e:
-            self.iface.messageBar().pushMessage("Error", f"No se pudo actualizar: {str(e)}", level=Qgis.Critical)
-        finally:
-            QtWidgets.QApplication.restoreOverrideCursor()
-
     @lru_cache(maxsize=32)
     def _query(self, url, timeout=5):
-        print(url)
+        print(f"[SERVER]: {url}")
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         return response
@@ -540,46 +514,12 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
-    def query_location_info(self):
-        """Consulta la API y llena los campos de resultados."""
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-        try:
-            url = self._build_endpoint_query('ubicacion')
-            response = self._query(url, timeout=10)
-            data = response.json()
-
-            res = data.get('ubicacion', {})
-
-            # Limpiamos resultados previos
-            for w in self.res_widgets.values(): w.clear()
-
-            # Mapeo de la respuesta al widget
-            # La API de Georef devuelve objetos para prov/depto/etc.
-            if res:
-                self.res_widgets['calle'].setText(res.get('calle', {}).get('nombre', ''))
-                self.res_widgets['numero'].setText(str(res.get('calle', {}).get('altura', '')))
-                self.res_widgets['gobierno_local'].setText(res.get('gobierno_local', {}).get('nombre', ''))
-                self.res_widgets['departamento'].setText(res.get('departamento', {}).get('nombre', ''))
-                self.res_widgets['provincia'].setText(res.get('provincia', {}).get('nombre', ''))
-                self.res_widgets['nomenclatura'].setText(res.get('nomenclatura', ''))
-            else:
-                self.iface.messageBar().pushMessage("Georef", "Sin datos en esa coordenada", level=Qgis.Info)
-
-        except Exception as e:
-            self.iface.messageBar().pushMessage("Error", str(e), level=Qgis.Critical)
-        finally:
-            QtWidgets.QApplication.restoreOverrideCursor()
-
     def run_process(self):
         """
         Encapsula la lógica de descarga y carga.
         Retorna True si el proceso finalizó correctamente.
         """
         layer_name = self.comboBox_endpoints.currentData()
-
-        if layer_name == 'ubicacion':
-            self.query_location_info()
-            return False
 
         try:
             if self.checkBox_full_download.isChecked():
@@ -597,13 +537,5 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # para que sea esta función quien controle el cierre.
             super(EndpointDialog, self).accept()
 
-
     def tr(self, message):
-        """Fuerza el contexto exacto para coincidir con el archivo .ts/.qm de la UI"""
         return QtCore.QCoreApplication.translate('EndpointDialogBase', message)
-
-
-def get_endpoints_config():
-    yaml_path = os.path.join(os.path.dirname(__file__), '..', 'endpoints.yaml')
-    with open(yaml_path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)

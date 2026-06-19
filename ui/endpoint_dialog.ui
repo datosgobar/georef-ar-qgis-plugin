@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GeorefAR | Listados</string>
+   <string>GeorefAR | Territorial and statistical areas</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -29,6 +29,13 @@
    <property name="bottomMargin">
     <number>20</number>
    </property>
+   <item>
+    <widget class="QLabel" name="dialog_description">
+     <property name="text">
+      <string>Descripción del diálogo</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="groupBox_api">
      <property name="title">
@@ -64,6 +71,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="checkBox_full_download">
+     <property name="text">
+      <string>Download complete file (without filters)</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -72,6 +86,14 @@
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>560</width>
+        <height>192</height>
+       </rect>
+      </property>
       <layout class="QVBoxLayout" name="layout_params">
        <property name="spacing">
         <number>8</number>
@@ -118,18 +140,39 @@
    <header>qgsfilewidget.h</header>
   </customwidget>
  </customwidgets>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>EndpointDialogBase</receiver>
    <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>EndpointDialogBase</receiver>
    <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
  </connections>
 </ui>

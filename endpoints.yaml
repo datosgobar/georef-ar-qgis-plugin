@@ -36,8 +36,8 @@ asentamientos:
   url_path: "/asentamientos"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependency: [ "departamento" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
+    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
     - { name: "nombre", label: "Nombre" }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad máxima", default: "10" }
@@ -50,9 +50,9 @@ localidades:
   url_path: "/localidades"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
-    - { name: "gobierno_local", label: "Gobierno local", options: "gobiernos-locales", dependency: [ "provincia" ] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependency: [ "departamento" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
+    - { name: "gobierno_local", label: "Gobierno local", options: "gobiernos-locales", dependencies: [ "provincia", "departamento" ] }
+    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
     - { name: "nombre", label: "Nombre" }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad máxima", default: "10" }
@@ -74,8 +74,8 @@ localidades-censales:
   url_path: "/localidades-censales"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: [ "provincia" ] }
-    - { name: "gobierno_local", label: "gobierno local", options: "gobiernos-locales", dependency: [ "provincia" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
+    - { name: "gobierno_local", label: "gobierno local", options: "gobiernos-locales", dependencies: [ "provincia", "departamento" ] }
     - { name: "nombre", label: "Nombre" }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad máxima", default: "10" }
@@ -87,7 +87,7 @@ fracciones-censales:
   url_path: "/fracciones-censales"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: [ "provincia" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad", default: "10" }
     - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
@@ -98,8 +98,8 @@ radios-censales:
   url_path: "/radios-censales"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: [ "provincia" ] }
-    - { name: "fraccion_censal", label: "Fracción censal", options: "fracciones-censales", dependency: [ "departamento" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
+    - { name: "fraccion_censal", label: "Fracción censal", options: "fracciones-censales", dependencies: [ "provincia", "departamento" ] }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad", default: "10" }
     - { name: "geometria", label: "Geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
@@ -110,9 +110,9 @@ calles:
   url_path: "/calles"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependency: [ "departamento" ] }
-    - { name: "localidad", label: "localidad", options: "localidades", dependency: [ "departamento" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
+    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
+    - { name: "localidad", label: "localidad", options: "localidades", dependencies: [ "provincia", "departamento" ] }
     - { name: "nombre", label: "Nombre" }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad", default: "10" }
@@ -125,9 +125,9 @@ direcciones:
   url_path: "/direcciones"
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependency: [ "departamento" ] }
-    - { name: "localidad", label: "Localidad", options: "localidades", dependency: [ "departamento" ] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
+    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
+    - { name: "localidad", label: "Localidad", options: "localidades", dependencies: [ "departamento" ] }
     - { name: "direccion", label: "Direccion", default: "" }
     - { name: "max", label: "Cantidad máxima", default: "10" }
     - { name: "desplazar", label: "Desplazar a la manzana", default: false }
@@ -154,9 +154,9 @@ establecimientos:
   params:
     - { name: "tipo", label: "Tipo", options: ["educativos", "universitarios"] }
     - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependency: ["provincia"] }
+    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
     - { name: "nombre", label: "Nombre" }
-    - { name: "gestion", label: "Tipo de gestion", default: "estatal", options: ["estatal", "privado"] }
+    - { name: "gestion", label: "Tipo de gestion", options: ["estatal", "privado"] }
     - { name: "dependencia", label: "Dependencia"}
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad", default: "10" }

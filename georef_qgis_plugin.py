@@ -21,13 +21,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
+from qgis.PyQt.QtWidgets import QToolBar
 
-from .logic.nearby_establishments_dialog import NearbyEstablishments
-from .logic.reverse_geocoding_dialog import ReverseGeocoding
+from .logic.addresses_dialog import AddressesDialog
+from .logic.nearby_establishments_dialog import NearbyEstablishmentsDialog
+from .logic.reverse_geocoding_dialog import ReverseGeocodingDialog
 from .logic.about_dialog import AboutDialog
 from .logic.settings_dialog import SettingsDialog
 from .logic.endpoint_dialog import EndpointDialog
@@ -49,16 +50,13 @@ class GeorefQgisPlugin:
         """
         # Save reference to the QGIS interface
         self.iface = iface
+
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-        # initialize locale
-        locale = QSettings().value('locale/userLocale')
-        locale = locale[0:2]
-        locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'GeorefArApi_{}.qm'.format(locale))
 
+        # initialize locale
+        locale = QSettings().value('locale/userLocale')[0:2]
+        locale_path = os.path.join(self.plugin_dir, 'i18n', '{}.qm'.format(locale))
         if os.path.exists(locale_path):
             self.translator = QTranslator(QCoreApplication.instance())
             self.translator.load(locale_path)
@@ -87,7 +85,7 @@ class GeorefQgisPlugin:
         :rtype: QString
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QtCore.QCoreApplication.translate('EndpointDialogBase', message)
+        return QCoreApplication.translate('GeorefQgisPlugin', message)
 
 
     def add_action(
@@ -167,6 +165,11 @@ class GeorefQgisPlugin:
     def initGui(self):
         icon_path = ':/plugins/georef_ar_api/icon.png'
 
+        old_toolbar = self.iface.mainWindow().findChild(QToolBar, "GeorefArToolbar")
+        if old_toolbar:
+            self.iface.mainWindow().removeToolBar(old_toolbar)
+            old_toolbar.deleteLater()
+
         # 1. Crear las acciones
         self.action_lists = QAction(
             QIcon(icon_path),
@@ -174,6 +177,13 @@ class GeorefQgisPlugin:
             self.iface.mainWindow()
         )
         self.action_lists.triggered.connect(self.lists_callback)
+
+        self.action_addresses = QAction(
+            QIcon(icon_path),
+            self.tr('Addresses'),
+            self.iface.mainWindow()
+        )
+        self.action_addresses.triggered.connect(self.addresses_callback)
 
         self.action_reverse_georef = QAction(
             QIcon(icon_path),
@@ -223,37 +233,75 @@ class GeorefQgisPlugin:
 
         # 5. Agregar las acciones
         self.q_menu.addAction(self.action_lists)
+        self.q_menu.addAction(self.action_addresses)
         self.q_menu.addAction(self.action_reverse_georef)
         self.q_menu.addAction(self.action_near_establishments)
         self.q_menu.addSeparator()
         self.q_menu.addAction(self.action_settings)
         self.q_menu.addAction(self.action_about)
 
-        # 6. Icono en la barra de herramientas
-        self.iface.addToolBarIcon(self.action_lists)
+        # 6. Iconos simultáneos en la barra de herramientas independiente
+        # Creamos la barra de manera estándar mediante la interfaz oficial de QGIS
+        self.toolbar = self.iface.addToolBar("Georef AR Toolbar")
+        self.toolbar.setObjectName("GeorefArToolbar")
 
-        self.actions = [self.action_lists, self.action_about]
+        # Agregamos las tres acciones directamente
+        self.toolbar.addAction(self.action_lists)
+        self.toolbar.addAction(self.action_addresses)
+        self.toolbar.addAction(self.action_reverse_georef)
+        self.toolbar.addAction(self.action_near_establishments)
+
+        # Guardamos la referencia de las tres acciones para el ciclo de vida del plugin
+        self.actions = [
+            self.action_lists,
+            self.action_addresses,
+            self.action_reverse_georef,
+            self.action_near_establishments,
+            self.action_settings,
+            self.action_about
+        ]
 
     def unload(self):
-        # Quitamos el icono de la barra
-        self.iface.removeToolBarIcon(self.action_lists)
 
-        # Quitamos el menú completo de la barra de Complementos
-        plugins_menu = self.iface.pluginMenu()
-        plugins_menu.removeAction(self.q_menu.menuAction())
+        """Elimina de forma segura todos los componentes inyectados en la interfaz de QGIS."""
+        # 1. Quitar el traductor de la memoria de Qt
+        if hasattr(self, 'translator'):
+            QCoreApplication.removeTranslator(self.translator)
+
+        # 2. Quitar el menú completo de la barra superior de Complementos de QGIS
+        if hasattr(self, 'q_menu') and self.q_menu:
+            plugins_menu = self.iface.pluginMenu()
+            plugins_menu.removeAction(self.q_menu.menuAction())
+            self.q_menu = None
+
+        # 3. Quitar físicamente tu barra de herramientas usando la API nativa de QGIS
+        if hasattr(self, 'toolbar') and self.toolbar:
+            import sip  # Importamos la librería de gestión de memoria de PyQt
+
+            # Desanclamos formalmente la barra de la ventana de QGIS
+            self.iface.mainWindow().removeToolBar(self.toolbar)
+
+            # Forzamos la destrucción SÍNCRONA e INMEDIATA del objeto en C++
+            sip.delete(self.toolbar)
+            self.toolbar = None
 
     def lists_callback(self):
         self.dlg = EndpointDialog(self.iface)
         self.dlg.show()
         self.dlg.exec_()
 
+    def addresses_callback(self):
+        self.dlg = AddressesDialog(self.iface)
+        self.dlg.show()
+        self.dlg.exec_()
+
     def reverse_georef_callback(self):
-        self.dlg = ReverseGeocoding(self.iface)
+        self.dlg = ReverseGeocodingDialog(self.iface)
         self.dlg.show()
         self.dlg.exec_()
 
     def near_establishments_callback(self):
-        self.dlg = NearbyEstablishments(self.iface)
+        self.dlg = NearbyEstablishmentsDialog(self.iface)
         self.dlg.show()
         self.dlg.exec_()
 
