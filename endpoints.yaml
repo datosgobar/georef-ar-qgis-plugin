@@ -142,10 +142,11 @@ ubicacion:
   reverse_georef: true
   tmp_layer: false
   params:
-    - { name: "lat", label: "Latitud", default: "" }
-    - { name: "lon", label: "Longitud", default: "" }
-    - { name: "calle", label: "Calle", readonly: true}
+    - { name: "lat", label: "Latitud" }
+    - { name: "lon", label: "Longitud" }
     - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+  fields:
+    - { name: "calle", label: "Calle" }
 
 establecimientos:
   title: "Establecimientos"

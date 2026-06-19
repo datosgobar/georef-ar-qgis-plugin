@@ -4,14 +4,13 @@ import tempfile
 from functools import lru_cache
 
 import requests
-import yaml
 from qgis.PyQt import uic, QtWidgets, QtCore
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
 
-from .utils import PointTool
+from .utils import PointTool, get_endpoints_config
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'endpoint_dialog.ui')
 FORM_CLASS, _ = uic.loadUiType(ui_path)
@@ -34,10 +33,20 @@ TRANSLATE = {
     "Ruta": "RUTA"
 }
 
-def get_endpoints_config():
-    yaml_path = os.path.join(os.path.dirname(__file__), '..', 'endpoints.yaml')
-    with open(yaml_path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)
+ENDPOINTS = [
+    "provincias",
+    "departamentos",
+    "gobiernos-locales",
+    "asentamientos",
+    "localidades",
+    "aglomerados",
+    "localidades-censales",
+    "fracciones-censales",
+    "radios-censales",
+    "calles",
+    "establecimientos",
+]
+
 
 class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
@@ -52,7 +61,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.endpoints_config = get_endpoints_config()
 
         for key, info in self.endpoints_config.items():
-            self.comboBox_endpoints.addItem(self.tr(info['title']), key)
+            if key in self._get_enabled_endpoints():
+                self.comboBox_endpoints.addItem(self.tr(info['title']), key)
         self.comboBox_endpoints.currentIndexChanged.connect(self._load_endpoint_params)
 
         self.checkBox_full_download = QtWidgets.QCheckBox(self.tr("Download complete file (without filters)"))
@@ -68,6 +78,9 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self.run_process)
 
         self._load_endpoint_params()
+
+    def _get_enabled_endpoints(self):
+        return ENDPOINTS
 
     def _load_endpoint_params(self):
         """
@@ -141,7 +154,6 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 qw.setText(param['label'])
                 lbl.setVisible(False)
 
-            # Lógica de dependencia
             if 'dependency' in param and isinstance(options, str):
                 btn_refresh = QtWidgets.QPushButton()
                 icon = self.style().standardIcon(QtWidgets.QStyle.SP_BrowserReload)
@@ -150,7 +162,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 btn_refresh.setToolTip(f"Actualizar basado en: {', '.join(param['dependency'])}")
                 btn_refresh.clicked.connect(
                     lambda chk=False, w=qw, target=options, deps=param['dependency']:
-                    self.refresh_dependent_combo(w, target, deps)
+                    self._refresh_dependent_combo(w, target, deps)
                 )
                 edit_layout.addWidget(btn_refresh)
 
@@ -158,10 +170,79 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             self.layout_params.addWidget(container)
 
         if self.endpoints_config.get(key).get('reverse_georef', False):
-            self.setup_location_ui()
+            self._setup_location_ui()
 
         self.layout_params.addStretch()
         self.scrollAreaWidgetContents.adjustSize()
+
+    def _setup_location_ui(self):
+        """Configura la interfaz específica para el endpoint de ubicación."""
+        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
+        container_in = QtWidgets.QWidget()
+        lyt_in = QtWidgets.QHBoxLayout(container_in)
+        lyt_in.setContentsMargins(0, 5, 0, 5)
+
+        lbl_in = QtWidgets.QLabel(self.tr("Coordinates:"))
+        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
+
+        self.edit_lat = QtWidgets.QLineEdit()
+        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
+        self.edit_lon = QtWidgets.QLineEdit()
+        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
+
+        self.param_widgets_dict['lat'] = self.edit_lat
+        self.param_widgets_dict['lon'] = self.edit_lon
+
+        btn_map = QtWidgets.QPushButton()
+        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
+        btn_map.setFixedSize(28, 28)
+        btn_map.clicked.connect(self._activate_map_tool)
+
+        lyt_in.addWidget(lbl_in)
+        lyt_in.addWidget(self.edit_lat)
+        lyt_in.addWidget(self.edit_lon)
+        lyt_in.addWidget(btn_map)
+
+        self.layout_params.addWidget(container_in)
+
+        # --- SEPARADOR ---
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.layout_params.addWidget(line)
+
+        # --- SECCIÓN DE RESULTADOS ---
+        self.res_widgets = {}
+        campos_res = [
+            ('calle', self.tr('Street:')),
+            ('numero', self.tr('Number:')),
+            ('gobierno_local', self.tr('Local Government:')),
+            ('departamento', self.tr('Department:')),
+            ('provincia', self.tr('Province:')),
+            ('nomenclatura', self.tr('Nomenclature:'))
+        ]
+
+        for key_res, label_text in campos_res:
+            container_res = QtWidgets.QWidget()
+            lyt_res = QtWidgets.QHBoxLayout(container_res)
+            lyt_res.setContentsMargins(0, 2, 0, 2)
+
+            lbl = QtWidgets.QLabel(label_text)
+            lbl.setFixedWidth(128)
+
+            edit = QtWidgets.QLineEdit()
+            edit.setReadOnly(True)
+            # Estilo visual para indicar que es solo lectura
+            edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
+
+            lyt_res.addWidget(lbl)
+            lyt_res.addWidget(edit)
+            self.res_widgets[key_res] = edit
+            self.layout_params.addWidget(container_res)
+
+        self.layout_params.addStretch()
+        self.scrollAreaWidgetContents.adjustSize()
+
 
     def _fetch_values(self, layer, params):
 
@@ -171,7 +252,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
 
         try:
-            r = self.query(url)
+            r = self._query(url)
             data = json.loads(r.text)
             key = layer.replace("-", "_")
             items = data.get(key, [])
@@ -183,24 +264,14 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return sorted_data
 
-    def toggle_params_visibility(self, state):
-        is_full = (state == QtCore.Qt.Checked)
-        self.scrollArea.setEnabled(not is_full)
-        if is_full:
-            self.mFileWidget.setFilter("GeoJSON (*.geojson);;CSV (*.csv);;JSON (*.json);;NDJSON (*.ndjson)")
-            self.iface.messageBar().pushMessage("Info", "Se descargará el recurso completo sin aplicar filtros.",
-                                                level=Qgis.Info, duration=2)
-        else:
-            self.mFileWidget.setFilter("GeoJSON (*.geojson);;GeoPackage (*.gpkg)")
-
-    def activate_map_tool(self):
+    def _activate_map_tool(self):
         """Activa la herramienta para capturar el clic en el lienzo."""
         # self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
         self.hide()
-        self.map_tool = PointTool(self.iface.mapCanvas(), self.on_map_clicked)
+        self.map_tool = PointTool(self.iface.mapCanvas(), self._on_map_clicked)
         self.iface.mapCanvas().setMapTool(self.map_tool)
 
-    def on_map_clicked(self, point):
+    def _on_map_clicked(self, point):
         """Callback cuando el usuario hace clic en el mapa."""
         # 1. Restaurar la herramienta anterior
         self.iface.mapCanvas().unsetMapTool(self.map_tool)
@@ -242,7 +313,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.raise_()
         self.activateWindow()
 
-    def refresh_dependent_combo(self, combo_widget, layer, dependencies):
+    def _refresh_dependent_combo(self, combo_widget, layer, dependencies):
         """
         Actualiza un QComboBox basándose en el valor de otros widgets.
         """
@@ -260,12 +331,12 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             self.iface.messageBar().pushMessage("Aviso", "Complete los campos de dependencia primero", level=Qgis.Info)
             return
 
-        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
+        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.1").rstrip('/')
         url = f"{base_url}/{layer}?{'&'.join(filters)}&campos=basico&max=500"
 
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
         try:
-            r = self.query(url)
+            r = self._query(url)
             r.raise_for_status()
             data = r.json()
 
@@ -293,27 +364,14 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
-    def fill_param(self, param):
-        pass
-
     @lru_cache(maxsize=32)
-    def query(self, url, timeout=5):
+    def _query(self, url, timeout=5):
         print(url)
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         return response
 
-    def update_file_filter(self, text):
-        # Mapeo simple de formato a extensión
-        ext_map = {
-            'geojson': 'GeoJSON (*.geojson)',
-            'gpkg': 'GeoPackage (*.gpkg)',
-            'shp': 'ESRI Shapefile comprimido (*.zip)',
-        }
-        new_filter = ext_map.get(text.lower(), "Todos los archivos (*.*)")
-        self.mFileWidget.setFilter(new_filter)
-
-    def get_base_url(self):
+    def _get_base_url(self):
         return self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
 
     def _get_param_format(self):
@@ -321,12 +379,14 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         param_format = API_FORMATS[geometria]
         return param_format
 
-    def get_selected_file(self):
-        path = self.mFileWidget.filePath().strip()
-        return path
+    def _build_endpoint_query(self, layer) -> str:
+        """
+            Contruye en función de los parámetros actuales la url de consulta.
 
-    def build_endpoint_query(self, layer):
-        base_url = self.get_base_url()
+        :param layer: El nombre de la capa para la que se construirá la consulta
+        :return: La url
+        """
+        base_url = self._get_base_url()
         endpoint = self.endpoints_config[layer]
         url = f"{base_url}{endpoint['url_path']}"
 
@@ -355,14 +415,14 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return url
 
-    def full_download(self, layer_name):
+    def _full_download(self, layer_name):
         """
             Descarga el archivo completo de la capa especificada en el formato especificado.
             Si no se indicó un path de descargará el archivo en formato geojson y se guardará en un archivo temporal.
 
         :return: el path del archivo descargado
         """
-        base_url = self.get_base_url()
+        base_url = self._get_base_url()
         endpoint = self.endpoints_config[layer_name]["url_path"]
         path = self.mFileWidget.filePath().strip()
 
@@ -379,7 +439,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 raise ValueError
 
             url = f"{base_url}{endpoint}.{file_format}"
-            response = self.query(url, timeout=15)
+            response = self._query(url, timeout=15)
 
             with open(path, 'wb') as f:
                 f.write(response.content)
@@ -409,8 +469,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             Descarga la capa especificada utilizando los parámetros indicados.
             Si no se indicó un archivo de descarga se guardará en un archivo temporal.
 
-
-        :param layer_name:
+        :param layer_name: El nombre de la capa
         """
 
         path = self.mFileWidget.filePath().strip()
@@ -421,8 +480,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             if not path:
                 path = os.path.join(tempfile.mkdtemp(), f"data.{self._get_param_format()}")
 
-            url = self.build_endpoint_query(layer_name)
-            response = self.query(url, timeout=15)
+            url = self._build_endpoint_query(layer_name)
+            response = self._query(url, timeout=15)
 
             with open(path, 'wb') as f:
                 f.write(response.content)
@@ -484,8 +543,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         """Consulta la API y llena los campos de resultados."""
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
         try:
-            url = self.build_endpoint_query('ubicacion')
-            response = self.query(url, timeout=10)
+            url = self._build_endpoint_query('ubicacion')
+            response = self._query(url, timeout=10)
             data = response.json()
 
             res = data.get('ubicacion', {})
@@ -510,23 +569,6 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
-    def query_near_stablishments_info(self):
-        """Consulta la API y llena los campos de resultados."""
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-        try:
-            url = self.build_endpoint_query('establecimientos-cercanos')
-            response = self.query(url, timeout=10)
-            data = response.json()
-
-            res = data.get('establecimientos_cercanos', {})
-
-
-
-        except Exception as e:
-            self.iface.messageBar().pushMessage("Error", str(e), level=Qgis.Critical)
-        finally:
-            QtWidgets.QApplication.restoreOverrideCursor()
-
     def run_process(self):
         """
         Encapsula la lógica de descarga y carga.
@@ -540,7 +582,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         try:
             if self.checkBox_full_download.isChecked():
-                self.full_download(layer_name)
+                self._full_download(layer_name)
             else:
                 self.download(layer_name)
             return True
@@ -554,112 +596,6 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             # para que sea esta función quien controle el cierre.
             super(EndpointDialog, self).accept()
 
-    def setup_location_ui(self):
-        """Configura la interfaz específica para el endpoint de ubicación."""
-        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
-        container_in = QtWidgets.QWidget()
-        lyt_in = QtWidgets.QHBoxLayout(container_in)
-        lyt_in.setContentsMargins(0, 5, 0, 5)
-
-        lbl_in = QtWidgets.QLabel(self.tr("Coordinates:"))
-        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
-
-        self.edit_lat = QtWidgets.QLineEdit()
-        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
-        self.edit_lon = QtWidgets.QLineEdit()
-        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
-
-        self.param_widgets_dict['lat'] = self.edit_lat
-        self.param_widgets_dict['lon'] = self.edit_lon
-
-        btn_map = QtWidgets.QPushButton()
-        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
-        btn_map.setFixedSize(28, 28)
-        btn_map.clicked.connect(self.activate_map_tool)
-
-        lyt_in.addWidget(lbl_in)
-        lyt_in.addWidget(self.edit_lat)
-        lyt_in.addWidget(self.edit_lon)
-        lyt_in.addWidget(btn_map)
-
-        self.layout_params.addWidget(container_in)
-
-        # --- SEPARADOR ---
-        line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.layout_params.addWidget(line)
-
-        # --- SECCIÓN DE RESULTADOS ---
-        self.res_widgets = {}
-        campos_res = [
-            ('calle', self.tr('Street:')),
-            ('numero', self.tr('Number:')),
-            ('gobierno_local', self.tr('Local Government:')),
-            ('departamento', self.tr('Department:')),
-            ('provincia', self.tr('Province:')),
-            ('nomenclatura', self.tr('Nomenclature:'))
-        ]
-
-        for key_res, label_text in campos_res:
-            container_res = QtWidgets.QWidget()
-            lyt_res = QtWidgets.QHBoxLayout(container_res)
-            lyt_res.setContentsMargins(0, 2, 0, 2)
-
-            lbl = QtWidgets.QLabel(label_text)
-            lbl.setFixedWidth(128)
-
-            edit = QtWidgets.QLineEdit()
-            edit.setReadOnly(True)
-            # Estilo visual para indicar que es solo lectura
-            edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
-
-            lyt_res.addWidget(lbl)
-            lyt_res.addWidget(edit)
-            self.res_widgets[key_res] = edit
-            self.layout_params.addWidget(container_res)
-
-        self.layout_params.addStretch()
-        self.scrollAreaWidgetContents.adjustSize()
-
-    def setup_establecimientos_cercanos_ui(self):
-        """Configura la interfaz específica para el endpoint de establecimientos cercanos."""
-        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
-        container_in = QtWidgets.QWidget()
-        lyt_in = QtWidgets.QHBoxLayout(container_in)
-        lyt_in.setContentsMargins(0, 5, 0, 5)
-
-        lbl_in = QtWidgets.QLabel("Coordenadas:")
-        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
-
-        self.edit_lat = QtWidgets.QLineEdit()
-        self.edit_lat.setPlaceholderText("Latitud")
-        self.edit_lon = QtWidgets.QLineEdit()
-        self.edit_lon.setPlaceholderText("Longitud")
-
-        self.param_widgets_dict['lat'] = self.edit_lat
-        self.param_widgets_dict['lon'] = self.edit_lon
-
-        btn_map = QtWidgets.QPushButton()
-        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
-        btn_map.setFixedSize(28, 28)
-        btn_map.clicked.connect(self.activate_map_tool)
-
-        lyt_in.addWidget(lbl_in)
-        lyt_in.addWidget(self.edit_lat)
-        lyt_in.addWidget(self.edit_lon)
-        lyt_in.addWidget(btn_map)
-
-        self.layout_params.addWidget(container_in)
-
-        # --- SEPARADOR ---
-        line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.layout_params.addWidget(line)
-
-        self.layout_params.addStretch()
-        self.scrollAreaWidgetContents.adjustSize()
 
     def tr(self, message):
         """Fuerza el contexto exacto para coincidir con el archivo .ts/.qm de la UI"""

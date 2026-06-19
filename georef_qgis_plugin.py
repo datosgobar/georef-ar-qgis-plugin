@@ -26,6 +26,8 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
 
+from .logic.nearby_establishments_dialog import NearbyEstablishments
+from .logic.reverse_geocoding_dialog import ReverseGeocoding
 from .logic.about_dialog import AboutDialog
 from .logic.settings_dialog import SettingsDialog
 from .logic.endpoint_dialog import EndpointDialog
@@ -64,7 +66,7 @@ class GeorefQgisPlugin:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Georef Ar Api')
+        self.menu = self.tr('Georef Ar Api')
 
         self.dlg = None
 
@@ -166,12 +168,26 @@ class GeorefQgisPlugin:
         icon_path = ':/plugins/georef_ar_api/icon.png'
 
         # 1. Crear las acciones
-        self.action_endpoint = QAction(
+        self.action_lists = QAction(
             QIcon(icon_path),
-            self.tr('Endpoints'),
+            self.tr('Listados'),
             self.iface.mainWindow()
         )
-        self.action_endpoint.triggered.connect(self.endpoint_callback)
+        self.action_lists.triggered.connect(self.lists_callback)
+
+        self.action_reverse_georef = QAction(
+            QIcon(icon_path),
+            self.tr('Georeferenciación inversa'),
+            self.iface.mainWindow()
+        )
+        self.action_reverse_georef.triggered.connect(self.reverse_georef_callback)
+
+        self.action_near_establishments = QAction(
+            QIcon(icon_path),
+            self.tr('Establecimientos cercanos'),
+            self.iface.mainWindow()
+        )
+        self.action_near_establishments.triggered.connect(self.near_establishments_callback)
 
         self.action_settings = QAction(
             self.tr('Settings'),
@@ -203,28 +219,41 @@ class GeorefQgisPlugin:
 
         # 4. Limpiar el menú antes de agregar (por si es una recarga)
         self.q_menu.clear()
+        self.q_menu.setIcon(QIcon(icon_path))
 
         # 5. Agregar las acciones
-        self.q_menu.addAction(self.action_endpoint)
+        self.q_menu.addAction(self.action_lists)
+        self.q_menu.addAction(self.action_reverse_georef)
+        self.q_menu.addAction(self.action_near_establishments)
         self.q_menu.addSeparator()
         self.q_menu.addAction(self.action_settings)
         self.q_menu.addAction(self.action_about)
 
         # 6. Icono en la barra de herramientas
-        self.iface.addToolBarIcon(self.action_endpoint)
+        self.iface.addToolBarIcon(self.action_lists)
 
-        self.actions = [self.action_endpoint, self.action_about]
+        self.actions = [self.action_lists, self.action_about]
 
     def unload(self):
         # Quitamos el icono de la barra
-        self.iface.removeToolBarIcon(self.action_endpoint)
+        self.iface.removeToolBarIcon(self.action_lists)
 
         # Quitamos el menú completo de la barra de Complementos
         plugins_menu = self.iface.pluginMenu()
         plugins_menu.removeAction(self.q_menu.menuAction())
 
-    def endpoint_callback(self):
+    def lists_callback(self):
         self.dlg = EndpointDialog(self.iface)
+        self.dlg.show()
+        self.dlg.exec_()
+
+    def reverse_georef_callback(self):
+        self.dlg = ReverseGeocoding(self.iface)
+        self.dlg.show()
+        self.dlg.exec_()
+
+    def near_establishments_callback(self):
+        self.dlg = NearbyEstablishments(self.iface)
         self.dlg.show()
         self.dlg.exec_()
 
