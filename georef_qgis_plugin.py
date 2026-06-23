@@ -26,6 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
 from qgis.PyQt.QtWidgets import QToolBar
 
+from .strings import MenuStrings
 from .logic.addresses_dialog import AddressesDialog
 from .logic.nearby_establishments_dialog import NearbyEstablishmentsDialog
 from .logic.reverse_geocoding_dialog import ReverseGeocodingDialog
@@ -86,7 +87,6 @@ class GeorefQgisPlugin:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('GeorefQgisPlugin', message)
-
 
     def add_action(
         self,
@@ -162,6 +162,13 @@ class GeorefQgisPlugin:
 
         return action
 
+    def _create_dialog_callback(self, dialog_class, *args, **kwargs):
+        def callback():
+            self.dlg = dialog_class(*args, **kwargs)
+            self.dlg.show()
+            self.dlg.exec_()
+        return callback
+
     def initGui(self):
         icon_path = ':/plugins/georef_ar_api/icon.png'
 
@@ -170,52 +177,63 @@ class GeorefQgisPlugin:
             self.iface.mainWindow().removeToolBar(old_toolbar)
             old_toolbar.deleteLater()
 
-        # 1. Crear las acciones
-        self.action_lists = QAction(
-            QIcon(icon_path),
-            self.tr('Listados'),
-            self.iface.mainWindow()
+        # Actions
+        self.action_territorial_units = self.add_action(
+            icon_path=icon_path,
+            text=self.tr(MenuStrings.TERRITORIAL_UNITS_QUERIES_MENU_TITLE),
+            callback=self._create_dialog_callback(EndpointDialog, self.iface),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_lists.triggered.connect(self.lists_callback)
 
-        self.action_addresses = QAction(
-            QIcon(icon_path),
-            self.tr('Addresses'),
-            self.iface.mainWindow()
+        self.action_addresses = self.add_action(
+            icon_path=icon_path,
+            text=self.tr(MenuStrings.ADDRESSES_TITLE),
+            callback=self._create_dialog_callback(AddressesDialog, self.iface),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_addresses.triggered.connect(self.addresses_callback)
 
-        self.action_reverse_georef = QAction(
-            QIcon(icon_path),
-            self.tr('Georeferenciación inversa'),
-            self.iface.mainWindow()
+        self.action_reverse_geocoding = self.add_action(
+            icon_path=icon_path,
+            text=self.tr(MenuStrings.REVERSE_GEOREF_TITLE),
+            callback=self._create_dialog_callback(ReverseGeocodingDialog, self.iface),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_reverse_georef.triggered.connect(self.reverse_georef_callback)
 
-        self.action_near_establishments = QAction(
-            QIcon(icon_path),
-            self.tr('Establecimientos cercanos'),
-            self.iface.mainWindow()
+        self.action_nearby_establishments = self.add_action(
+            icon_path=icon_path,
+            text=self.tr(MenuStrings.NEARBY_ESTABLISHMENT_TITLE),
+            callback=self._create_dialog_callback(NearbyEstablishmentsDialog, self.iface),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_near_establishments.triggered.connect(self.near_establishments_callback)
 
-        self.action_settings = QAction(
-            self.tr('Settings'),
-            self.iface.mainWindow()
+        self.action_settings = self.add_action(
+            icon_path='',
+            text=self.tr(MenuStrings.SETTINGS_TITLE),
+            callback=self._create_dialog_callback(SettingsDialog, self.iface.mainWindow()),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_settings.triggered.connect(self.settings_callback)
 
-        self.action_about = QAction(
-            self.tr('About'),
-            self.iface.mainWindow()
+        self.action_about = self.add_action(
+            icon_path='',
+            text=self.tr(MenuStrings.ABOUT_TITLE),
+            callback=self._create_dialog_callback(AboutDialog, self.iface.mainWindow()),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
         )
-        self.action_about.triggered.connect(self.about_callback)
 
-        # 2. Obtener el menú de Complementos (Plugins) de QGIS
+        # Menu
         plugins_menu = self.iface.pluginMenu()
-
-        # 3. Buscar si ya existe el submenú de tu plugin o crearlo
-        # Esto evita que se cree el menú repetido si recargas
         self.q_menu = None
         for action in plugins_menu.actions():
             if action.menu() and action.menu().title() == self.tr('Georef AR API'):
@@ -223,93 +241,43 @@ class GeorefQgisPlugin:
                 break
 
         if not self.q_menu:
-            # Si no existe, lo creamos y lo añadimos al menú de Complementos
             self.q_menu = QMenu(self.tr('Georef AR API'), plugins_menu)
             plugins_menu.addMenu(self.q_menu)
 
-        # 4. Limpiar el menú antes de agregar (por si es una recarga)
         self.q_menu.clear()
         self.q_menu.setIcon(QIcon(icon_path))
 
-        # 5. Agregar las acciones
-        self.q_menu.addAction(self.action_lists)
+        self.q_menu.addAction(self.action_territorial_units)
         self.q_menu.addAction(self.action_addresses)
-        self.q_menu.addAction(self.action_reverse_georef)
-        self.q_menu.addAction(self.action_near_establishments)
+        self.q_menu.addAction(self.action_reverse_geocoding)
+        self.q_menu.addAction(self.action_nearby_establishments)
         self.q_menu.addSeparator()
         self.q_menu.addAction(self.action_settings)
         self.q_menu.addAction(self.action_about)
 
-        # 6. Iconos simultáneos en la barra de herramientas independiente
-        # Creamos la barra de manera estándar mediante la interfaz oficial de QGIS
+        # Toolbar
         self.toolbar = self.iface.addToolBar("Georef AR Toolbar")
         self.toolbar.setObjectName("GeorefArToolbar")
-
-        # Agregamos las tres acciones directamente
-        self.toolbar.addAction(self.action_lists)
+        self.toolbar.addAction(self.action_territorial_units)
         self.toolbar.addAction(self.action_addresses)
-        self.toolbar.addAction(self.action_reverse_georef)
-        self.toolbar.addAction(self.action_near_establishments)
-
-        # Guardamos la referencia de las tres acciones para el ciclo de vida del plugin
-        self.actions = [
-            self.action_lists,
-            self.action_addresses,
-            self.action_reverse_georef,
-            self.action_near_establishments,
-            self.action_settings,
-            self.action_about
-        ]
+        self.toolbar.addAction(self.action_reverse_geocoding)
+        self.toolbar.addAction(self.action_nearby_establishments)
 
     def unload(self):
-
         """Elimina de forma segura todos los componentes inyectados en la interfaz de QGIS."""
-        # 1. Quitar el traductor de la memoria de Qt
+
         if hasattr(self, 'translator'):
             QCoreApplication.removeTranslator(self.translator)
 
-        # 2. Quitar el menú completo de la barra superior de Complementos de QGIS
         if hasattr(self, 'q_menu') and self.q_menu:
             plugins_menu = self.iface.pluginMenu()
             plugins_menu.removeAction(self.q_menu.menuAction())
             self.q_menu = None
 
-        # 3. Quitar físicamente tu barra de herramientas usando la API nativa de QGIS
         if hasattr(self, 'toolbar') and self.toolbar:
-            import sip  # Importamos la librería de gestión de memoria de PyQt
-
-            # Desanclamos formalmente la barra de la ventana de QGIS
+            import sip
             self.iface.mainWindow().removeToolBar(self.toolbar)
-
-            # Forzamos la destrucción SÍNCRONA e INMEDIATA del objeto en C++
             sip.delete(self.toolbar)
             self.toolbar = None
 
-    def lists_callback(self):
-        self.dlg = EndpointDialog(self.iface)
-        self.dlg.show()
-        self.dlg.exec_()
 
-    def addresses_callback(self):
-        self.dlg = AddressesDialog(self.iface)
-        self.dlg.show()
-        self.dlg.exec_()
-
-    def reverse_georef_callback(self):
-        self.dlg = ReverseGeocodingDialog(self.iface)
-        self.dlg.show()
-        self.dlg.exec_()
-
-    def near_establishments_callback(self):
-        self.dlg = NearbyEstablishmentsDialog(self.iface)
-        self.dlg.show()
-        self.dlg.exec_()
-
-    def settings_callback(self):
-        self.dlg = SettingsDialog()
-        self.dlg.show()
-        self.dlg.exec_()
-
-    def about_callback(self):
-        self.dlg = AboutDialog(self.iface.mainWindow())
-        self.dlg.exec_()
