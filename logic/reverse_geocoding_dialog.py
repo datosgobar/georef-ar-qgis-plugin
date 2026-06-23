@@ -15,10 +15,14 @@ class ReverseGeocodingDialog(EndpointDialog):
         if ok_button:
             ok_button.setVisible(False)
 
-        self.set_dialog_description(strings.MenuStrings.REVERSE_GEOREF_DESCRIPTION)
+        self.set_dialog_description(self.tr(strings.MenuStrings.REVERSE_GEOCODING_DESCRIPTION))
+
+    def tr(self, message):
+        from qgis.PyQt import QtCore
+        return QtCore.QCoreApplication.translate('ReverseGeocodingDialog', message)
 
     def setWindowTitle(self, a0):
-        super().setWindowTitle(strings.MenuStrings.REVERSE_GEOREF_TITLE)
+        super().setWindowTitle(strings.MenuStrings.REVERSE_GEOCODING_TITLE)
 
     def get_enabled_endpoints(self):
         return {k: self.endpoints_config[k] for k in ['ubicacion'] if k in self.endpoints_config}

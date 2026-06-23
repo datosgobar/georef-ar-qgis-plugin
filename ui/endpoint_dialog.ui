@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GeorefAR | Territorial and statistical areas</string>
+   <string>GeorefAR | Territorial unities</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -32,7 +32,10 @@
    <item>
     <widget class="QLabel" name="dialog_description">
      <property name="text">
-      <string>Descripción del diálogo</string>
+      <string>Allows querying and visualizing the different territorial units of Argentina using Georef data. Select the type of unit (provinces, departments, municipalities, localities, streets, among others) and enter the desired filters to get a list of results. The matching features will be automatically added to the project as a new geographic layer.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

@@ -8,7 +8,11 @@ class NearbyEstablishmentsDialog(EndpointDialog):
         super(NearbyEstablishmentsDialog, self).__init__(iface, parent)
         self.groupBox_api.setVisible(False)
 
-        super().set_dialog_description(strings.MenuStrings.NEARBY_ESTABLISHMENT_DESCRIPTION)
+        super().set_dialog_description(self.tr(strings.MenuStrings.NEARBY_ESTABLISHMENT_DESCRIPTION))
+
+    def tr(self, message):
+        from qgis.PyQt import QtCore
+        return QtCore.QCoreApplication.translate('NearbyEstablishmentsDialog', message)
 
     def setWindowTitle(self, a0):
         super().setWindowTitle(strings.MenuStrings.NEARBY_ESTABLISHMENT_TITLE)

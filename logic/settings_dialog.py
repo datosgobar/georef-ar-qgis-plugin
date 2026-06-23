@@ -10,6 +10,7 @@ FORM_CLASS, _ = uic.loadUiType(ui_path)
 
 
 class SettingsDialog(QtWidgets.QDialog, FORM_CLASS):
+
     def __init__(self, parent=None):
         super(SettingsDialog, self).__init__(parent)
         self.setupUi(self)

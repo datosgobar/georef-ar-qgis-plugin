@@ -73,7 +73,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         :param description: Un str con la descripción del diálogo
         """
-        if hasattr(self, 'dialog_description'):
+        if hasattr(self, 'dialog_description') and description:
             self.dialog_description.setText(description)
 
     def get_enabled_endpoints(self):

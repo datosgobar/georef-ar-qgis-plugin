@@ -27,7 +27,7 @@ from qgis.PyQt.QtWidgets import QAction, QMenu
 from qgis.PyQt.QtWidgets import QToolBar
 
 from .strings import MenuStrings
-from .logic.addresses_dialog import AddressesDialog
+from .logic.geocoding_dialog import GeocodingDialog
 from .logic.nearby_establishments_dialog import NearbyEstablishmentsDialog
 from .logic.reverse_geocoding_dialog import ReverseGeocodingDialog
 from .logic.about_dialog import AboutDialog
@@ -189,8 +189,8 @@ class GeorefQgisPlugin:
 
         self.action_addresses = self.add_action(
             icon_path=icon_path,
-            text=self.tr(MenuStrings.ADDRESSES_TITLE),
-            callback=self._create_dialog_callback(AddressesDialog, self.iface),
+            text=self.tr(MenuStrings.GEOCODING_TITLE),
+            callback=self._create_dialog_callback(GeocodingDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
             parent=self.iface.mainWindow()
@@ -198,7 +198,7 @@ class GeorefQgisPlugin:
 
         self.action_reverse_geocoding = self.add_action(
             icon_path=icon_path,
-            text=self.tr(MenuStrings.REVERSE_GEOREF_TITLE),
+            text=self.tr(MenuStrings.REVERSE_GEOCODING_TITLE),
             callback=self._create_dialog_callback(ReverseGeocodingDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
