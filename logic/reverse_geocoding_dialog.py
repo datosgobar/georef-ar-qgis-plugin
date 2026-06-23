@@ -24,6 +24,9 @@ class ReverseGeocodingDialog(EndpointDialog):
     def setWindowTitle(self, a0):
         super().setWindowTitle(strings.MenuStrings.REVERSE_GEOCODING_TITLE)
 
+    def set_note(self, note):
+        super().set_note(self.tr(strings.MenuStrings.REVERSE_GEOCODING_NOTE))
+
     def get_enabled_endpoints(self):
         return {k: self.endpoints_config[k] for k in ['ubicacion'] if k in self.endpoints_config}
 

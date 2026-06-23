@@ -134,6 +134,16 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QLabel" name="dialog_note">
+     <property name="text">
+      <string>Note:</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>

@@ -35,7 +35,7 @@
 <context>
     <name>EndpointDialog</name>
     <message>
-        <location filename="../logic/endpoint_dialog.py" line="262"/>
+        <location filename="../logic/endpoint_dialog.py" line="275"/>
         <source>[Create temporal layer]</source>
         <translation>[Crear capa temporal]</translation>
     </message>
@@ -72,6 +72,11 @@
         <source>Download complete file (without filters)</source>
         <translation>Descarga archivo completo (sin filtros)</translation>
     </message>
+    <message>
+        <location filename="../ui/endpoint_dialog.ui" line="140"/>
+        <source>Note:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GeocodingDialog</name>
@@ -79,6 +84,11 @@
         <location filename="../strings.py" line="12"/>
         <source>Allows standardizing and georeferencing a postal address using Georef services. Enter the address data, such as street, house number, and locality, to obtain its geographic location and associated territorial information. The results can be visualized directly on the map and used in subsequent spatial analyses.</source>
         <translation>Permite normalizar y georreferenciar una dirección postal utilizando los servicios de Georef. Ingrese los datos de la dirección, como calle, numeración y localidad, para obtener su ubicación geográfica y la información territorial asociada. Los resultados obtenidos pueden visualizarse directamente sobre el mapa y utilizarse en posteriores análisis espaciales.</translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="19"/>
+        <source>Note: A query may return more than one result if the entered information is insufficient or if there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires that the selected street includes house number data in the data sources used by Georef. In cases where this information is unavailable, the address can be standardized, but it will not be possible to retrieve its geographic location.</source>
+        <translation>Nota: Una búsqueda puede devolver más de un resultado cuando la información ingresada es insuficiente o existen coincidencias similares en distintas jurisdicciones. Asimismo, la georreferenciación de una dirección requiere que la calle seleccionada cuente con información sobre alturas en las fuentes de datos utilizadas por Georef. En aquellos casos en que esta información no esté disponible, la dirección podrá ser normalizada, pero no será posible obtener su ubicación geográfica.</translation>
     </message>
 </context>
 <context>
@@ -89,12 +99,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="37"/>
+        <location filename="../strings.py" line="49"/>
         <source>Settings</source>
         <translation>Configuraciones</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="38"/>
+        <location filename="../strings.py" line="50"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -104,52 +114,52 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="20"/>
+        <location filename="../strings.py" line="28"/>
         <source>Reverse Geocoding</source>
         <translation>Geocodificación inversa</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="28"/>
+        <location filename="../strings.py" line="40"/>
         <source>Nearby Establishments</source>
         <translation>Establecimientos cercanos</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="43"/>
+        <location filename="../strings.py" line="55"/>
         <source>Territorial Divisions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="44"/>
+        <location filename="../strings.py" line="56"/>
         <source>Infrastructure and Streets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="45"/>
+        <location filename="../strings.py" line="57"/>
         <source>Points of Interest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="50"/>
+        <location filename="../strings.py" line="62"/>
         <source>Could not connect to Georef API. Please check your internet connection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="51"/>
+        <location filename="../strings.py" line="63"/>
         <source>The server took too long to respond. Please try again later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="52"/>
+        <location filename="../strings.py" line="64"/>
         <source>API Server Error (Status {code}).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="57"/>
+        <location filename="../strings.py" line="69"/>
         <source>The query returned no features. Try adjusting your filters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="58"/>
+        <location filename="../strings.py" line="70"/>
         <source>Layer successfully loaded into the project.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -167,7 +177,7 @@
 <context>
     <name>NearbyEstablishmentsDialog</name>
     <message>
-        <location filename="../strings.py" line="29"/>
+        <location filename="../strings.py" line="41"/>
         <source>Allows locating public facilities and government agencies near a specific location. Select a point on the map or enter its coordinates, and specify the search radius, the maximum number of results, and the type of establishment to query. The results will be added to the project as a geographic layer for visualization and analysis.</source>
         <translation type="unfinished">Permite localizar establecimientos y organismos públicos próximos a una ubicación determinada. Seleccione un punto sobre el mapa o ingrese sus coordenadas, indique el radio de búsqueda, la cantidad máxima de resultados y el tipo de establecimiento a consultar. Los resultados se incorporarán al proyecto como una capa geográfica para su visualización y análisis.</translation>
     </message>
@@ -175,54 +185,59 @@
 <context>
     <name>ReverseGeocodingDialog</name>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="37"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="40"/>
         <source>Coordinates:</source>
         <translation>Coordenadas:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="41"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="44"/>
         <source>Latitude</source>
         <translation>Latitud</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="43"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="46"/>
         <source>Longitude</source>
         <translation>Longitud</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="69"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="72"/>
         <source>Street:</source>
         <translation>Calle:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="70"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="73"/>
         <source>Number:</source>
         <translation>Número:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="71"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="74"/>
         <source>Local Government:</source>
         <translation>Gobierno Local:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="72"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="75"/>
         <source>Department:</source>
         <translation>Departamento:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="73"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="76"/>
         <source>Province:</source>
         <translation>Provincia:</translation>
     </message>
     <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="74"/>
+        <location filename="../logic/reverse_geocoding_dialog.py" line="77"/>
         <source>Nomenclature:</source>
         <translation>Nomenclatura:</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="21"/>
+        <location filename="../strings.py" line="29"/>
         <source>Allows obtaining territorial and addressing information from a geographic location. Enter the coordinates or select a point on the map to find the closest address—if it exists—and the different territorial units containing that point, such as province, department, municipality, and locality.</source>
         <translation type="unfinished">Permite obtener información territorial y de direccionamiento a partir de una ubicación geográfica. Ingrese las coordenadas o seleccione un punto sobre el mapa para conocer la dirección más cercana —si existe— y las distintas unidades territoriales que contienen ese punto, como provincia, departamento, municipio y localidad.</translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="35"/>
+        <source>Click &apos;Apply&apos; to view the data for the selected point.</source>
+        <translation>Presiona “Aplicar” para ver los datos del punto elegido.</translation>
     </message>
 </context>
 <context>

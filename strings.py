@@ -16,6 +16,14 @@ class MenuStrings:
         "associated territorial information. The results can be visualized directly on the map and used in "
         "subsequent spatial analyses."
     )
+    GEOCODING_NOTE = QtCore.QCoreApplication.translate(
+        'GeocodingDialog',
+        "Note: A query may return more than one result if the entered information is insufficient or if "
+        "there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires "
+        "that the selected street includes house number data in the data sources used by Georef. In cases where this "
+        "information is unavailable, the address can be standardized, but it will not be possible to retrieve its "
+        "geographic location."
+    )
 
     REVERSE_GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Reverse Geocoding")
     REVERSE_GEOCODING_DESCRIPTION = QtCore.QCoreApplication.translate(
@@ -23,6 +31,10 @@ class MenuStrings:
         "Allows obtaining territorial and addressing information from a geographic location. "
         "Enter the coordinates or select a point on the map to find the closest address—if it exists—and the different "
         "territorial units containing that point, such as province, department, municipality, and locality."
+    )
+    REVERSE_GEOCODING_NOTE = QtCore.QCoreApplication.translate(
+        'ReverseGeocodingDialog',
+        "Click 'Apply' to view the data for the selected point."
     )
 
     NEARBY_ESTABLISHMENT_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Nearby Establishments")

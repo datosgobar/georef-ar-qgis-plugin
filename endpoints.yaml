@@ -112,7 +112,7 @@ calles:
     - { name: "provincia", label: "Provincia", options: "provincias" }
     - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
     - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "localidad", label: "localidad", options: "localidades", dependencies: [ "provincia", "departamento" ] }
+    - { name: "localidad", label: "Localidad", options: "localidades", dependencies: [ "provincia", "departamento" ] }
     - { name: "nombre", label: "Nombre" }
     - { name: "id", label: "ID" }
     - { name: "max", label: "Cantidad", default: "10" }
@@ -123,6 +123,7 @@ calles:
 direcciones:
   title: "Direcciones"
   url_path: "/direcciones"
+  full_download: false
   params:
     - { name: "provincia", label: "Provincia", options: "provincias" }
     - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }

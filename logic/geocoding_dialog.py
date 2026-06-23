@@ -14,6 +14,9 @@ class GeocodingDialog(EndpointDialog):
         from qgis.PyQt import QtCore
         return QtCore.QCoreApplication.translate('GeocodingDialog', message)
 
+    def set_note(self, note):
+        super().set_note(self.tr(strings.MenuStrings.GEOCODING_NOTE))
+
     def setWindowTitle(self, a0):
         super().setWindowTitle(strings.MenuStrings.GEOCODING_TITLE)
 

@@ -66,6 +66,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.set_dialog_description(None)
         self._render_layer_combo_box()
         self._render_layer()
+        self.set_note(None)
 
     def set_dialog_description(self, description):
         """
@@ -99,6 +100,18 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self._render_layout_response()
         self._render_layout_file()
         self._render_layout_buttons()
+
+    def set_note(self, note):
+        """
+            Configura una nota al pie que tendrá el diálogo para informar al usuario.
+
+        :param note: Un str con la descripción de la nota
+        """
+        if hasattr(self, 'dialog_note') and note:
+            self.dialog_note.setText(note)
+
+        elif hasattr(self, 'dialog_note'):
+            self.dialog_note.setVisible(False)
 
     def _render_layout_download(self):
         """
