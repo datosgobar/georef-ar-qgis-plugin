@@ -4,16 +4,13 @@ import tempfile
 from functools import lru_cache
 
 import requests
-from PyQt5.QtWidgets import QVBoxLayout
 from qgis.PyQt import uic, QtWidgets, QtCore
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
-from sphinx.environment.collectors import dependencies
 
 from .utils import PointTool, get_endpoints_config
-from .. import strings
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'endpoint_dialog.ui')
 FORM_CLASS, _ = uic.loadUiType(ui_path)
