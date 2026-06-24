@@ -179,7 +179,7 @@ class GeorefQgisPlugin:
 
         # Actions
         self.action_territorial_units = self.add_action(
-            icon_path=icon_path,
+            icon_path=':/plugins/georef_ar_api/icons/territorial_units.svg',
             text=self.tr(MenuStrings.TERRITORIAL_UNITS_QUERIES_MENU_TITLE),
             callback=self._create_dialog_callback(EndpointDialog, self.iface),
             add_to_menu=False,
@@ -188,7 +188,7 @@ class GeorefQgisPlugin:
         )
 
         self.action_addresses = self.add_action(
-            icon_path=icon_path,
+            icon_path=':/plugins/georef_ar_api/icons/geocoding.svg',
             text=self.tr(MenuStrings.GEOCODING_TITLE),
             callback=self._create_dialog_callback(GeocodingDialog, self.iface),
             add_to_menu=False,
@@ -197,7 +197,7 @@ class GeorefQgisPlugin:
         )
 
         self.action_reverse_geocoding = self.add_action(
-            icon_path=icon_path,
+            icon_path=':/plugins/georef_ar_api/icons/reverse_geocoding.svg',
             text=self.tr(MenuStrings.REVERSE_GEOCODING_TITLE),
             callback=self._create_dialog_callback(ReverseGeocodingDialog, self.iface),
             add_to_menu=False,
@@ -206,7 +206,7 @@ class GeorefQgisPlugin:
         )
 
         self.action_nearby_establishments = self.add_action(
-            icon_path=icon_path,
+            icon_path=':/plugins/georef_ar_api/icons/nearby_establishments.svg',
             text=self.tr(MenuStrings.NEARBY_ESTABLISHMENT_TITLE),
             callback=self._create_dialog_callback(NearbyEstablishmentsDialog, self.iface),
             add_to_menu=False,

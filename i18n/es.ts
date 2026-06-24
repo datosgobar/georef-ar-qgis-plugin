@@ -28,14 +28,14 @@
     </message>
     <message>
         <location filename="../ui/about_dialog.ui" line="74"/>
-        <source>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;Contact&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p align=&quot;center&quot;&gt;Versión 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;Contacto&lt;/a&gt;&lt;/p&gt;</translation>
+        <source>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p align=&quot;center&quot;&gt;Versión 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>EndpointDialog</name>
     <message>
-        <location filename="../logic/endpoint_dialog.py" line="275"/>
+        <location filename="../logic/endpoint_dialog.py" line="272"/>
         <source>[Create temporal layer]</source>
         <translation>[Crear capa temporal]</translation>
     </message>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/endpoint_dialog.ui" line="140"/>
         <source>Note:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nota:</translation>
     </message>
 </context>
 <context>
@@ -96,7 +96,7 @@
     <message>
         <location filename="../georef_qgis_plugin.py" line="68"/>
         <source>Georef Ar Api</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../strings.py" line="49"/>
@@ -106,12 +106,12 @@
     <message>
         <location filename="../strings.py" line="50"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Acerca</translation>
     </message>
     <message>
         <location filename="../strings.py" line="7"/>
         <source>Georef AR API</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../strings.py" line="28"/>
@@ -141,12 +141,12 @@
     <message>
         <location filename="../strings.py" line="62"/>
         <source>Could not connect to Georef API. Please check your internet connection.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo conectar a la API de Georef. Por favor revise su conección a internet.</translation>
     </message>
     <message>
         <location filename="../strings.py" line="63"/>
         <source>The server took too long to respond. Please try again later.</source>
-        <translation type="unfinished"></translation>
+        <translation>El servidor parece estar tardando en responder. Por favor intente más tarde.</translation>
     </message>
     <message>
         <location filename="../strings.py" line="64"/>
@@ -156,12 +156,12 @@
     <message>
         <location filename="../strings.py" line="69"/>
         <source>The query returned no features. Try adjusting your filters.</source>
-        <translation type="unfinished"></translation>
+        <translation>La consulta no devolvió resultados. Intente ajustar sus filtros.</translation>
     </message>
     <message>
         <location filename="../strings.py" line="70"/>
         <source>Layer successfully loaded into the project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa cargada exitosamente en el proyecto.</translation>
     </message>
     <message>
         <location filename="../strings.py" line="9"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../strings.py" line="41"/>
         <source>Allows locating public facilities and government agencies near a specific location. Select a point on the map or enter its coordinates, and specify the search radius, the maximum number of results, and the type of establishment to query. The results will be added to the project as a geographic layer for visualization and analysis.</source>
-        <translation type="unfinished">Permite localizar establecimientos y organismos públicos próximos a una ubicación determinada. Seleccione un punto sobre el mapa o ingrese sus coordenadas, indique el radio de búsqueda, la cantidad máxima de resultados y el tipo de establecimiento a consultar. Los resultados se incorporarán al proyecto como una capa geográfica para su visualización y análisis.</translation>
+        <translation>Permite localizar establecimientos y organismos públicos próximos a una ubicación determinada. Seleccione un punto sobre el mapa o ingrese sus coordenadas, indique el radio de búsqueda, la cantidad máxima de resultados y el tipo de establecimiento a consultar. Los resultados se incorporarán al proyecto como una capa geográfica para su visualización y análisis.</translation>
     </message>
 </context>
 <context>
@@ -232,7 +232,7 @@
     <message>
         <location filename="../strings.py" line="29"/>
         <source>Allows obtaining territorial and addressing information from a geographic location. Enter the coordinates or select a point on the map to find the closest address—if it exists—and the different territorial units containing that point, such as province, department, municipality, and locality.</source>
-        <translation type="unfinished">Permite obtener información territorial y de direccionamiento a partir de una ubicación geográfica. Ingrese las coordenadas o seleccione un punto sobre el mapa para conocer la dirección más cercana —si existe— y las distintas unidades territoriales que contienen ese punto, como provincia, departamento, municipio y localidad.</translation>
+        <translation>Permite obtener información territorial y de direccionamiento a partir de una ubicación geográfica. Ingrese las coordenadas o seleccione un punto sobre el mapa para conocer la dirección más cercana —si existe— y las distintas unidades territoriales que contienen ese punto, como provincia, departamento, municipio y localidad.</translation>
     </message>
     <message>
         <location filename="../strings.py" line="35"/>
