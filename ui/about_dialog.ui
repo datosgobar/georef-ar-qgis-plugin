@@ -71,7 +71,7 @@
    <item>
     <widget class="QLabel" name="label_links">
      <property name="text">
-      <string>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;Contact&lt;/a&gt;&lt;/p&gt;</string>
+      <string>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

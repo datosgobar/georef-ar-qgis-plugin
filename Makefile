@@ -50,7 +50,7 @@ UI_FILES = georef_ar_api_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 
-EXTRA_DIRS =
+EXTRA_DIRS = icons images
 
 COMPILED_RESOURCE_FILES = resources.py
 
