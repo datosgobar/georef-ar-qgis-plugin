@@ -152,6 +152,7 @@ ubicacion:
 establecimientos:
   title: "Establecimientos"
   url_path: "/establecimientos"
+  full_download: false
   params:
     - { name: "tipo", label: "Tipo", options: ["educativos", "universitarios"] }
     - { name: "provincia", label: "Provincia", options: "provincias" }

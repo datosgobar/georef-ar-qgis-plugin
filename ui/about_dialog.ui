@@ -32,7 +32,7 @@
    <item>
     <widget class="QLabel" name="label_logo">
      <property name="pixmap">
-      <pixmap resource="../resources.qrc">:/plugins/georef_ar_api/icon.png</pixmap>
+      <pixmap resource="../resources.qrc">:/plugins/georef_ar_api/images/logo.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
