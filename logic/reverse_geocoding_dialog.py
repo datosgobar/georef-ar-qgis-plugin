@@ -82,7 +82,42 @@ class ReverseGeocodingDialog(EndpointDialog):
 
     def _render_layout_params(self):
         """Configura la interfaz específica para el endpoint de ubicación."""
-        # --- FILA DE ENTRADA (Lat/Lon + Botón) ---
+
+        # 1. Dejar que la clase padre limpie el layout y cree los campos base según el YAML (lat, lon, campos)
+        super()._render_layout_params()
+
+        # 2. Extraer las referencias de los widgets generados automáticamente
+        self.edit_lat = self.param_widgets_dict.get('lat')
+        self.edit_lon = self.param_widgets_dict.get('lon')
+
+        # Control de seguridad en caso de que cambie el YAML
+        if not self.edit_lat or not self.edit_lon:
+            return
+
+        # 3. EXTRAERLOS DEL LAYOUT ORIGINAL DE FORMA SEGURA
+        # Buscamos los contenedores intermedios que creó la clase padre para lat y lon
+        parent_container_lat = self.edit_lat.parentWidget()
+        parent_container_lon = self.edit_lon.parentWidget()
+
+        if parent_container_lat and parent_container_lat.layout():
+            # Extraemos el widget de su layout horizontal intermedio
+            parent_container_lat.layout().removeWidget(self.edit_lat)
+            # Removemos el contenedor intermedio del layout vertical principal del diálogo
+            self.layout_params.removeWidget(parent_container_lat)
+            parent_container_lat.hide()
+            parent_container_lat.deleteLater()  # Borramos el contenedor vacío de forma segura
+
+        if parent_container_lon and parent_container_lon.layout():
+            parent_container_lon.layout().removeWidget(self.edit_lon)
+            self.layout_params.removeWidget(parent_container_lon)
+            parent_container_lon.hide()
+            parent_container_lon.deleteLater()
+
+        # 4. Configurar placeholders para la nueva fila compacta
+        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
+        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
+
+        # --- FILA DE ENTRADA UNIFICADA (Lat/Lon + Botón) ---
         container_in = QtWidgets.QWidget()
         lyt_in = QtWidgets.QHBoxLayout(container_in)
         lyt_in.setContentsMargins(0, 5, 0, 5)
@@ -90,31 +125,25 @@ class ReverseGeocodingDialog(EndpointDialog):
         lbl_in = QtWidgets.QLabel(self.tr("Coordinates:"))
         lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
 
-        self.edit_lat = QtWidgets.QLineEdit()
-        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
-        self.edit_lon = QtWidgets.QLineEdit()
-        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
-
-        self.param_widgets_dict['lat'] = self.edit_lat
-        self.param_widgets_dict['lon'] = self.edit_lon
-
         btn_map = QtWidgets.QPushButton()
         btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
         btn_map.setFixedSize(28, 28)
         btn_map.clicked.connect(self._activate_map_tool)
 
+        # 5. Inyectar los widgets originales reciclados en el nuevo layout horizontal
         lyt_in.addWidget(lbl_in)
         lyt_in.addWidget(self.edit_lat)
         lyt_in.addWidget(self.edit_lon)
         lyt_in.addWidget(btn_map)
 
-        self.layout_params.addWidget(container_in)
+        # Añadimos la fila unificada a la parte superior de los parámetros
+        self.layout_params.insertWidget(0, container_in)
 
         # --- SEPARADOR ---
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.HLine)
         line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.layout_params.addWidget(line)
+        self.layout_params.insertWidget(1, line)
 
         # --- SECCIÓN DE RESULTADOS ---
         self.res_widgets = {}
@@ -137,7 +166,6 @@ class ReverseGeocodingDialog(EndpointDialog):
 
             edit = QtWidgets.QLineEdit()
             edit.setReadOnly(True)
-            # Estilo visual para indicar que es solo lectura
             edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
 
             lyt_res.addWidget(lbl)
@@ -149,6 +177,7 @@ class ReverseGeocodingDialog(EndpointDialog):
         self.scrollAreaWidgetContents.adjustSize()
 
     def query_location_info(self):
+
         """Consulta la API y llena los campos de resultados."""
         QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
         try:
