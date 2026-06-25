@@ -4,7 +4,9 @@
         <file>icons/geocoding.svg</file>
         <file>icons/nearby_establishments.svg</file>
         <file>icons/reverse_geocoding.svg</file>
+        <file>icons/settings.svg</file>
         <file>icons/territorial_units.svg</file>
         <file>images/logo.png</file>
+        <file>images/sign.png</file>
     </qresource>
 </RCC>

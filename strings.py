@@ -18,7 +18,7 @@ class MenuStrings:
     )
     GEOCODING_NOTE = QtCore.QCoreApplication.translate(
         'GeocodingDialog',
-        "Note: A query may return more than one result if the entered information is insufficient or if "
+        "<b>Note:</b> A query may return more than one result if the entered information is insufficient or if "
         "there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires "
         "that the selected street includes house number data in the data sources used by Georef. In cases where this "
         "information is unavailable, the address can be standardized, but it will not be possible to retrieve its "

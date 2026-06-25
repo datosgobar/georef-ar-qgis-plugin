@@ -87,8 +87,8 @@
     </message>
     <message>
         <location filename="../strings.py" line="19"/>
-        <source>Note: A query may return more than one result if the entered information is insufficient or if there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires that the selected street includes house number data in the data sources used by Georef. In cases where this information is unavailable, the address can be standardized, but it will not be possible to retrieve its geographic location.</source>
-        <translation>Nota: Una búsqueda puede devolver más de un resultado cuando la información ingresada es insuficiente o existen coincidencias similares en distintas jurisdicciones. Asimismo, la georreferenciación de una dirección requiere que la calle seleccionada cuente con información sobre alturas en las fuentes de datos utilizadas por Georef. En aquellos casos en que esta información no esté disponible, la dirección podrá ser normalizada, pero no será posible obtener su ubicación geográfica.</translation>
+        <source>&lt;b&gt;Note:&lt;/b&gt; A query may return more than one result if the entered information is insufficient or if there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires that the selected street includes house number data in the data sources used by Georef. In cases where this information is unavailable, the address can be standardized, but it will not be possible to retrieve its geographic location.</source>
+        <translation>&lt;b&gt;Nota:&lt;/b&gt; Una búsqueda puede devolver más de un resultado cuando la información ingresada es insuficiente o existen coincidencias similares en distintas jurisdicciones. Asimismo, la georreferenciación de una dirección requiere que la calle seleccionada cuente con información sobre alturas en las fuentes de datos utilizadas por Georef. En aquellos casos en que esta información no esté disponible, la dirección podrá ser normalizada, pero no será posible obtener su ubicación geográfica.</translation>
     </message>
 </context>
 <context>
