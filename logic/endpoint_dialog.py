@@ -8,30 +8,16 @@ from qgis.PyQt import uic, QtWidgets, QtCore
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 
-from .utils import PointTool, get_endpoints_config
+from .utils import get_endpoints_config
+
+import logging
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'endpoint_dialog.ui')
 FORM_CLASS, _ = uic.loadUiType(ui_path)
 
 FULL_DOWNLOAD_FORMATS = ['csv', 'geojson', 'json', 'ndjson']
-API_FORMATS = {
-    'puntos': 'geojson',
-    'poligonos': 'gpkg',
-    'lineas': 'gpkg'
-}
-
-TRANSLATE = {
-    "Autopista": "AUT",
-    "Avenida": "AV",
-    "Boulevard": "BV",
-    "Calle": "CALLE",
-    "Pasillo": "PASILLO",
-    "Pasaje": "PASAJE",
-    "Peatonal": "PEATONAL",
-    "Ruta": "RUTA"
-}
 
 ENDPOINTS = [
     "provincias",
@@ -47,6 +33,7 @@ ENDPOINTS = [
     "establecimientos",
 ]
 
+logger = logging.getLogger(__name__)
 
 class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
@@ -65,6 +52,8 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self._render_layer()
         self.set_note(None)
 
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self.run_process)
+
     def set_dialog_description(self, description):
         """
             Configura la descripción que tendrá el diálogo para informar al usuario.
@@ -73,6 +62,18 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         if hasattr(self, 'dialog_description') and description:
             self.dialog_description.setText(description)
+
+    def set_note(self, note):
+        """
+            Configura una nota al pie que tendrá el diálogo para informar al usuario.
+
+        :param note: Un str con la descripción de la nota
+        """
+        if hasattr(self, 'dialog_note') and note:
+            self.dialog_note.setText(note)
+
+        elif hasattr(self, 'dialog_note'):
+            self.dialog_note.setVisible(False)
 
     def get_enabled_endpoints(self):
         """
@@ -96,19 +97,6 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self._render_layout_params()
         self._render_layout_response()
         self._render_layout_file()
-        self._render_layout_buttons()
-
-    def set_note(self, note):
-        """
-            Configura una nota al pie que tendrá el diálogo para informar al usuario.
-
-        :param note: Un str con la descripción de la nota
-        """
-        if hasattr(self, 'dialog_note') and note:
-            self.dialog_note.setText(note)
-
-        elif hasattr(self, 'dialog_note'):
-            self.dialog_note.setVisible(False)
 
     def _render_layout_download(self):
         """
@@ -119,7 +107,6 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.checkBox_full_download.stateChanged.connect(self._on_full_download_changed)
 
     def _on_full_download_changed(self, state):
-        # Evaluamos el estado usando las constantes de Qt
         if state == QtCore.Qt.Checked:
             self.scrollArea.setEnabled(False)
         else:
@@ -134,6 +121,59 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         return self.comboBox_endpoints.currentData()
 
+    def build_param_widget(self, parent_layout, param):
+        """
+            Construye el widget del parámetro en función del tipo y lo agrega al layout padre.
+
+        :param param: Un diccionario con las propiedades del parámetro
+
+        """
+
+        label = self.tr(param['label'])
+
+        # Parámetro de tipo booleano
+        if param['type'] == 'bool':
+            qw = QtWidgets.QCheckBox()
+            qw.setChecked(param.get('default', False))
+            qw.setText(label)
+            parent_layout.addWidget(qw)
+            return qw
+
+        # Si el parámetro no es booleano se coloca la etiqueta a la izquierda
+        lbl = QtWidgets.QLabel(label)
+        lbl.setFixedWidth(128)
+        parent_layout.addWidget(lbl)
+
+        # Parámetro de tipo lista
+        if param['type'] == 'list':
+            qw = QtWidgets.QComboBox()
+            for option in param.get('options', []):
+                qw.addItem(*option)
+            indice = qw.findData(param.get("default", None))
+            if indice != -1:
+                qw.setCurrentIndex(indice)
+            qw.setEditable(True)
+
+        # Parámetro de tipo texto
+        else:
+            qw = QtWidgets.QLineEdit()
+            qw.setText(param.get("default", ""))
+            parent_layout.addWidget(qw)
+
+        parent_layout.addWidget(qw)
+        return qw
+
+    def _clean_layout(self):
+        while self.layout_params.count():
+            item = self.layout_params.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                for child in widget.findChildren(QtWidgets.QWidget):
+                    child.setParent(None)
+                    child.deleteLater()
+                widget.setParent(None)
+                widget.deleteLater()
+
     def _render_layout_params(self):
         """
             Renderiza los parámetros de consulta definidos en el archivo de configuración bajo la llave params.
@@ -143,125 +183,169 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.layout_params.setAlignment(QtCore.Qt.AlignTop)
 
-        # Limpiar layout de forma agresiva
-        while self.layout_params.count():
-            item = self.layout_params.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)
-                widget.deleteLater()
+        self._clean_layout()
 
         self.param_widgets_dict.clear()
         self.param_dependencies_dict.clear()
 
         for param in self.endpoints_config[self.current_layer].get('params', []):
-            name = param.get('name')
-            options = param.get('options', None)
-            default = param.get('default', None)
-            visible = param.get('visible', True)
-            dependencies = param.get('dependencies', [])
-            label = self.tr(param['label'])
-
             container = QtWidgets.QWidget()
             parent_layout = QtWidgets.QHBoxLayout(container)
             parent_layout.setContentsMargins(5, 5, 5, 5)
             parent_layout.setSpacing(10)
 
-            lbl = QtWidgets.QLabel(label)
-            lbl.setFixedWidth(128)
-
-            if isinstance(default, bool):
-                qw = QtWidgets.QCheckBox()
-                qw.setChecked(param.get('default', None))
-                qw.setText(param['label'])
-                parent_layout.addWidget(qw)
-
-            elif options:
-                parent_layout.addWidget(lbl)
-
-                qw = QtWidgets.QComboBox()
-                qw.setEditable(True)
-                parent_layout.addWidget(qw)
-
-            else:
-                parent_layout.addWidget(lbl)
-
-                qw = QtWidgets.QLineEdit()
-                qw.setText(default)
-                parent_layout.addWidget(qw)
-
-            self.param_widgets_dict[name] = qw
+            qw = self.build_param_widget(parent_layout, param)
+            self.param_widgets_dict[param.get('name')] = qw
             self.layout_params.addWidget(container)
 
-            if not visible:
+            if not param.get('visible', True):
                 container.setVisible(False)
 
-        self._update_dependencies()
+        self._link_params()
 
         self.layout_params.addStretch()
         self.scrollAreaWidgetContents.adjustSize()
 
-    def _update_dependencies(self):
+    def _get_extra_values(self, param):
+        extras = param.get('extras', None)
+        endpoint = extras.get('endpoint', None)
+        # Lista de nombres de parámetros de los que depende este widget
+        dependencies_names = extras.get('params', [])
+        query_params_list = []
+
+        for dependent_name in dependencies_names:
+
+            if dependent_name in ['campos', 'max']:
+                continue
+
+            dependent_widget = self.param_widgets_dict.get(dependent_name)
+
+            value = None
+            if isinstance(dependent_widget, QtWidgets.QCheckBox):
+                value = dependent_widget.isChecked()
+            elif isinstance(dependent_widget, QtWidgets.QLineEdit):
+                value = dependent_widget.text()
+            elif isinstance(dependent_widget, QtWidgets.QComboBox):
+                value = dependent_widget.currentData()
+
+            if value:
+                query_params_list.append(f"{dependent_name}={value}")
+
+        query_params_list.append(f"campos=basico")
+        query_params_list.append(f"max=529")
+        return self._fetch_values(endpoint, query_params_list)
+
+    def _link_params(self):
         """
-        Analiza las dependencias declaradas en el archivo de configuración
-        y conecta los eventos necesarios para actualizaciones en cascada.
+            Analiza las dependencias declaradas en el archivo de configuración
+            y conecta los eventos necesarios para actualizaciones en cascada.
         """
-        for param in self.endpoints_config[self.current_layer].get('params', []):
-            options = param.get('options', None)
+
+        params_config = self.endpoints_config[self.current_layer].get('params', [])
+
+        for param in params_config:
+            if param['type'] != 'list':
+                continue
+
             name = param.get('name')
             qw = self.param_widgets_dict.get(name)
 
-            if not options or not isinstance(qw, QtWidgets.QComboBox):
-                continue
+            # Desconectamos señales previas para evitar acumulaciones duplicadas
+            try:
+                qw.currentIndexChanged.disconnect()
+            except TypeError:
+                pass  # No tenía señales conectadas todavía
+            qw.clear()
 
-            default = param.get('default', '')
+            # Agregamos los valores estáticos/predefinidos
+            for option in param.get('options', []):
+                qw.addItem(*option)
 
-            if isinstance(options, list):
-                qw.addItems(options)
-                qw.setEditText(default)
-                continue
+            # Buscamos valores dinámicos (extras)
+            extras = param.get('extras', None)
+            if isinstance(extras, dict) and (endpoint := extras.get('endpoint', None)):
 
-            dependencies = param.get('dependencies', [])
-            if not dependencies:
-                values = self._fetch_values(options, [])
-                qw.clear()
-                qw.addItems(values)
-                qw.setEditText(default)
-                continue
+                # Lista de nombres de parámetros de los que depende este widget
+                dependencies_names = extras.get('params', [])
 
-            for dep_name in dependencies:
-                parent_qw = self.param_widgets_dict.get(dep_name)
-                if parent_qw is not None:
-                    parent_qw.currentIndexChanged.connect(
-                        lambda _, h=qw, l=options, d=dependencies: self._refresh_dependent_combo(h, l, d)
-                    )
+                for dependent_name in dependencies_names:
+                    dependent_widget = self.param_widgets_dict.get(dependent_name)
+                    # CONEXIÓN EN CASCADA: Si el padre cambia, el hijo se actualiza
+                    if isinstance(dependent_widget, QtWidgets.QComboBox):
+                        dependent_widget.currentIndexChanged.connect(
+                            lambda pos, p=param: self._refresh_param(p)
+                        )
+                extra_options = self._get_extra_values(param)
+                for extra_option in extra_options:
+                    qw.addItem(*extra_option)
 
-    def _refresh_dependent_combo(self, combo_widget, endpoint, dependencies):
+            indice = qw.findData(param.get("default", None))
+            if indice != -1:
+                qw.setCurrentIndex(indice)
+
+    def _refresh_param(self, param):
         """
         Actualiza dinámicamente un QComboBox basándose en los valores
         seleccionados actualmente en sus widgets padres/dependencias.
         """
+
+        qw = self.param_widgets_dict.get(param.get('name'))
+        if not qw:
+            return
+
         # 1. Bloquear señales para evitar bucles infinitos durante el vaciado/llenado
-        combo_widget.blockSignals(True)
-        combo_widget.clear()
+        qw.blockSignals(True)
+        selected_backup = qw.currentData()
+        qw.clear()
 
-        filters = ["max=500", "campos=basico"]
-        for dep_name in dependencies or []:
-            dep_widget = self.param_widgets_dict.get(dep_name)
-            if dep_widget:
-                val = dep_widget.currentText().strip() if isinstance(dep_widget,
-                                                                     QtWidgets.QComboBox) else dep_widget.text().strip()
-                if val:
-                    filters.append(f"{dep_name}={val}")
+        for option in param.get('options', []):
+            qw.addItem(*option)
 
-        values = self._fetch_values(endpoint, filters)
-        if values:
-            combo_widget.addItems(values)
-            combo_widget.setEditText("")
+        extra_options = self._get_extra_values(param)
+        for extra_option in extra_options:
+            qw.addItem(*extra_option)
 
-        QtWidgets.QApplication.restoreOverrideCursor()
-        combo_widget.blockSignals(False)
-        combo_widget.currentIndexChanged.emit(combo_widget.currentIndex())
+        indice = qw.findData(selected_backup if selected_backup else param.get("default", None))
+        if indice != -1:
+            qw.setCurrentIndex(indice)
+
+        # QtWidgets.QApplication.restoreOverrideCursor()
+        qw.blockSignals(False)
+        # qw.currentIndexChanged.emit(qw.currentIndex())
+
+    def _fetch_values(self, endpoint, params):
+
+        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
+        url = f"{base_url}/{endpoint}"
+        if params:
+            url = f"{url}?{'&'.join(params)}"
+
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+
+        try:
+            r = self._query(url)
+            data = json.loads(r.text)
+            key = endpoint.replace("-", "_")
+            items = data.get(key, [])
+
+            unique_items = {}
+            for item in items:
+                nombre = item.get("nombre")
+                id_val = item.get("id")
+                if nombre and id_val:  # Nos aseguramos de que ambos existan
+                    unique_items[nombre] = id_val
+
+            sorted_data = sorted(list(unique_items.items()))
+
+        except Exception as e:
+
+            print(f"Error al buscar valores: {e}")
+            sorted_data = []
+
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
+
+        return sorted_data
 
     def _render_layout_response(self):
         pass
@@ -275,83 +359,9 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.mFileWidget.setVisible(tmp_layer)
         self.label_out.setVisible(tmp_layer)
 
-    def _render_layout_buttons(self):
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Apply).clicked.connect(self.run_process)
-
-    def _fetch_values(self, endpoint, params):
-
-        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
-        url = f"{base_url}/{endpoint}?{'&'.join(params)}"
-
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
-
-        try:
-            print(url)
-            r = self._query(url)
-            data = json.loads(r.text)
-            key = endpoint.replace("-", "_")
-            items = data.get(key, [])
-            # sorted_data = sorted([item["nombre"] for item in items])
-            sorted_data = sorted(list(set(item["nombre"] for item in items if item.get("nombre"))))
-        except:
-            sorted_data = []
-        finally:
-            QtWidgets.QApplication.restoreOverrideCursor()
-
-        return sorted_data
-
-    def _activate_map_tool(self):
-        """Activa la herramienta para capturar el clic en el lienzo."""
-        # self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
-        self.hide()
-        self.map_tool = PointTool(self.iface.mapCanvas(), self._on_map_clicked)
-        self.iface.mapCanvas().setMapTool(self.map_tool)
-
-    def _on_map_clicked(self, point):
-        """Callback cuando el usuario hace clic en el mapa."""
-        # 1. Restaurar la herramienta anterior
-        self.iface.mapCanvas().unsetMapTool(self.map_tool)
-
-        # 2. Configurar la transformación
-        # SRC de origen: El que tenga el proyecto actualmente
-        src_origen = self.iface.mapCanvas().mapSettings().destinationCrs()
-        # SRC de destino: WGS84 (EPSG:4326)
-        src_destino = QgsCoordinateReferenceSystem("EPSG:4326")
-
-        # Crear el transformador
-        transformacion = QgsCoordinateTransform(src_origen, src_destino, QgsProject.instance())
-
-        try:
-            # Transformar el punto capturado
-            punto_wgs84 = transformacion.transform(point)
-
-            if hasattr(self, 'res_widgets'):
-                for widget in self.res_widgets.values():
-                    widget.clear()
-
-            # Buscamos en el diccionario general o en las variables específicas
-            lat_w = self.param_widgets_dict.get('lat')
-            lon_w = self.param_widgets_dict.get('lon')
-
-            if lat_w: lat_w.setText(f"{punto_wgs84.y():.6f}")
-            if lon_w: lon_w.setText(f"{punto_wgs84.x():.6f}")
-
-        except Exception as e:
-            self.iface.messageBar().pushMessage(
-                "Error de transformación",
-                f"No se pudo convertir la coordenada: {str(e)}",
-                level=Qgis.Warning
-            )
-
-        # 4. Volver a mostrar la ventana
-        self.setWindowState(QtCore.Qt.WindowActive)
-        self.show()
-        self.raise_()
-        self.activateWindow()
-
     @lru_cache(maxsize=32)
     def _query(self, url, timeout=5):
-        print(f"[SERVER]: {url}")
+        logger.info(f"QUERY: {url}")
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         return response
@@ -360,9 +370,10 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         return self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
 
     def _get_param_format(self):
-        geometria = self.param_widgets_dict['geometria'].currentText().strip()
-        param_format = API_FORMATS[geometria]
-        return param_format
+        geom_qw = self.param_widgets_dict.get('geometria', None)
+        if isinstance(geom_qw, QtWidgets.QComboBox):
+            return geom_qw.currentData()
+        return "json"
 
     def _build_endpoint_query(self, layer) -> str:
         """
@@ -380,20 +391,17 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
             val = None
 
-            if isinstance(widget, QtWidgets.QCheckBox) and not (val := widget.isChecked()):
-                continue
+            if isinstance(widget, QtWidgets.QCheckBox):
+                val = widget.isChecked() or None
 
-            val = val or widget.currentText().strip() if isinstance(widget, QtWidgets.QComboBox) else widget.text().strip()
+            elif isinstance(widget, QtWidgets.QComboBox):
+                val = widget.currentData() or None
 
-            if not val:
-                continue
+            elif isinstance(widget, QtWidgets.QLineEdit):
+                val = widget.text()
 
-            if name == "geometria":
-                name = "formato"
-                val = self._get_param_format()
-
-            name = TRANSLATE.get(name, name)
-            query.append(f"{name}={val}")
+            if val:
+                query.append(f"{name}={val}")
 
         if query:
             url = f"{url}?{'&'.join(query)}"
@@ -538,6 +546,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.download(layer_name)
             return True
         except Exception as e:
+            self.iface.messageBar().pushMessage("Error Crítico", str(e), level=Qgis.Critical)
             return False
 
     def accept(self):

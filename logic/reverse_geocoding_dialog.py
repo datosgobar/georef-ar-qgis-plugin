@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QDialogButtonBox
 from qgis.PyQt import QtWidgets, QtCore
-from qgis._core import Qgis
+from qgis._core import Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsProject
 
+from .utils import PointTool
 from .. import strings
 from .endpoint_dialog import EndpointDialog
 
@@ -29,6 +30,55 @@ class ReverseGeocodingDialog(EndpointDialog):
 
     def get_enabled_endpoints(self):
         return {k: self.endpoints_config[k] for k in ['ubicacion'] if k in self.endpoints_config}
+
+    def _activate_map_tool(self):
+        """Activa la herramienta para capturar el clic en el lienzo."""
+        # self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
+        self.hide()
+        self.map_tool = PointTool(self.iface.mapCanvas(), self._on_map_clicked)
+        self.iface.mapCanvas().setMapTool(self.map_tool)
+
+    def _on_map_clicked(self, point):
+        """Callback cuando el usuario hace clic en el mapa."""
+        # 1. Restaurar la herramienta anterior
+        self.iface.mapCanvas().unsetMapTool(self.map_tool)
+
+        # 2. Configurar la transformación
+        # SRC de origen: El que tenga el proyecto actualmente
+        src_origen = self.iface.mapCanvas().mapSettings().destinationCrs()
+        # SRC de destino: WGS84 (EPSG:4326)
+        src_destino = QgsCoordinateReferenceSystem("EPSG:4326")
+
+        # Crear el transformador
+        transformacion = QgsCoordinateTransform(src_origen, src_destino, QgsProject.instance())
+
+        try:
+            # Transformar el punto capturado
+            punto_wgs84 = transformacion.transform(point)
+
+            if hasattr(self, 'res_widgets'):
+                for widget in self.res_widgets.values():
+                    widget.clear()
+
+            # Buscamos en el diccionario general o en las variables específicas
+            lat_w = self.param_widgets_dict.get('lat')
+            lon_w = self.param_widgets_dict.get('lon')
+
+            if lat_w: lat_w.setText(f"{punto_wgs84.y():.6f}")
+            if lon_w: lon_w.setText(f"{punto_wgs84.x():.6f}")
+
+        except Exception as e:
+            self.iface.messageBar().pushMessage(
+                "Error de transformación",
+                f"No se pudo convertir la coordenada: {str(e)}",
+                level=Qgis.Warning
+            )
+
+        # 4. Volver a mostrar la ventana
+        self.setWindowState(QtCore.Qt.WindowActive)
+        self.show()
+        self.raise_()
+        self.activateWindow()
 
     def _render_layout_params(self):
         """Configura la interfaz específica para el endpoint de ubicación."""

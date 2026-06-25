@@ -215,7 +215,7 @@ class GeorefQgisPlugin:
         )
 
         self.action_settings = self.add_action(
-            icon_path='',
+            icon_path=':/plugins/georef_ar_api/icons/settings.svg',
             text=self.tr(MenuStrings.SETTINGS_TITLE),
             callback=self._create_dialog_callback(SettingsDialog, self.iface.mainWindow()),
             add_to_menu=False,

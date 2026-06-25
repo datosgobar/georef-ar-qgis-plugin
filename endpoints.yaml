@@ -2,139 +2,682 @@ provincias:
   title: "Provincias"
   url_path: "/provincias"
   params:
-    - { name: "id", label: "ID" }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "max", label: "Cantidad máxima", default: "24" }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "24"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 departamentos:
   title: "Departamentos"
   url_path: "/departamentos"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "529" }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "529"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 gobiernos-locales:
   title: "Gobiernos locales"
   url_path: "/gobiernos-locales"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "10" }
-    - { name: "categoria", label: "Categoria", options: [ "Comisión de Fomento", "Comisión Municipal", "Comuna", "Comuna Rural", "Delegación Municipal", "Junta de Gobierno", "Municipio" ] }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "10"
+
+    - name: "categoria"
+      type: "list"
+      label: "Categoría"
+      default: null
+      options:
+        - [ "Todas las categorías", null ]
+        - [ "Comisión de Fomento", "Comisión de Fomento" ]
+        - [ "Comisión Municipal", "Comisión Municipal" ]
+        - [ "Comuna", "Comuna" ]
+        - [ "Comuna Rural", "Comuna Rural" ]
+        - [ "Delegación Municipal", "Delegación Municipal" ]
+        - [ "Junta de Gobierno", "Junta de Gobierno" ]
+        - [ "Municipio", "Municipio" ]
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 asentamientos:
   title: "Asentamientos"
   url_path: "/asentamientos"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "10" }
-    - { name: "categoria", label: "Categoria", options: [ "Base Antártica", "Componente de localidad compuesta", "Entidad", "Localidad simple", "Paraje" ] }
-    - { name: "geometria", label: "Geometría", default: "puntos", options: [ "puntos" ], visible: false }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "localidad_censal"
+      type: "list"
+      label: "Localidad censal"
+      default: null
+      options:
+        - [ "Todas las localidades censales", null ]
+      extras:
+        endpoint: "localidades-censales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "10"
+
+    - name: "categoria"
+      type: "list"
+      label: "Categoría"
+      default: null
+      options:
+        - [ "Todas las categorías", null ]
+        - [ "Base Antártica", "Base Antártica" ]
+        - [ "Componente de localidad compuesta", "Componente de localidad compuesta" ]
+        - [ "Entidad", "Entidad" ]
+        - [ "Localidad simple", "Localidad simple" ]
+        - [ "Paraje", "Paraje" ]
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "geojson"
+      options:
+        - [ "Puntos", "geojson" ]
+      visible: false
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 localidades:
   title: "Localidades"
   url_path: "/localidades"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
-    - { name: "gobierno_local", label: "Gobierno local", options: "gobiernos-locales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "10" }
-    - { name: "geometria", label: "Geometría", default: "puntos", options: [ "puntos" ], visible: false }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "gobierno_local"
+      type: "list"
+      label: "Gobierno local"
+      default: null
+      options:
+        - [ "Todos los gobiernos locales", null ]
+      extras:
+        endpoint: "gobiernos-locales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "localidad_censal"
+      type: "list"
+      label: "Localidad censal"
+      default: null
+      options:
+        - [ "Todas las localidades censales", null ]
+      extras:
+        endpoint: "localidades-censales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "10"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "geojson"
+      options:
+        - [ "Puntos", "geojson" ]
+      visible: false
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 aglomerados:
   title: "Aglomerados"
   url_path: "/aglomerados"
   params:
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "120" }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: [ "basico", "estandar", "completo" ], visible: false }
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "120"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 localidades-censales:
   title: "Localidades censales"
   url_path: "/localidades-censales"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
-    - { name: "gobierno_local", label: "gobierno local", options: "gobiernos-locales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad máxima", default: "10" }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "gobierno_local"
+      type: "list"
+      label: "Gobierno local"
+      default: null
+      options:
+        - [ "Todos los gobiernos locales", null ]
+      extras:
+        endpoint: "gobiernos-locales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "10"
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+      visible: false
 
 fracciones-censales:
   title: "Fracciones Censales"
   url_path: "/fracciones-censales"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad", default: "10" }
-    - { name: "geometria", label: "Geometría", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad"
+      default: "10"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 radios-censales:
   title: "Radios censales"
   url_path: "/radios-censales"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: [ "provincia" ] }
-    - { name: "fraccion_censal", label: "Fracción censal", options: "fracciones-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad", default: "10" }
-    - { name: "geometria", label: "Geometria", default: "poligonos", options: [ "puntos", "poligonos" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "fraccion_censal"
+      type: "list"
+      label: "Fracción censal"
+      default: null
+      options:
+        - [ "Todas las fracciones censales", null ]
+      extras:
+        endpoint: "fracciones-censales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad"
+      default: "10"
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Puntos", "geojson" ]
+        - [ "Polígonos", "gpkg" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 calles:
   title: "Vías de circulación"
   url_path: "/calles"
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "localidad", label: "Localidad", options: "localidades", dependencies: [ "provincia", "departamento" ], visible: false }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad", default: "10" }
-    - { name: "categoria", label: "Categoria", options: ["Autopista", "Avenida", "Boulevard", "Calle", "Pasillo", "Pasaje", "Peatonal", "Ruta"] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "Geometría", default: "lineas", options: [ "lineas" ], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "localidad_censal"
+      type: "list"
+      label: "Localidad censal"
+      default: null
+      options:
+        - [ "Todas las localidades censales", null ]
+      extras:
+        endpoint: "localidades-censales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "localidad"
+      type: "list"
+      label: "Localidad"
+      default: null
+      options:
+        - [ "Todas las localidades", null ]
+      extras:
+        endpoint: "localidades"
+        params: [ "provincia", "departamento" ]
+      visible: false
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad"
+      default: "10"
+
+    - name: "categoria"
+      type: "list"
+      label: "Categoría"
+      default: null
+      options:
+        - [ "Todas las categorías", null ]
+        - [ "Autopista", "AUT" ]
+        - [ "Avenida", "AV" ]
+        - [ "Boulevard", "BV" ]
+        - [ "Calle", "CALLE" ]
+        - [ "Pasillo", "PASILLO" ]
+        - [ "Pasaje", "PASAJE" ]
+        - [ "Peatonal", "PEATONAL" ]
+        - [ "Ruta", "RUTA" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "gpkg"
+      options:
+        - [ "Líneas", "gpkg" ]
+      visible: false
 
 direcciones:
   title: "Direcciones"
   url_path: "/direcciones"
   full_download: false
   params:
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
-    - { name: "localidad_censal", label: "Localidad censal", options: "localidades-censales", dependencies: [ "provincia", "departamento" ] }
-    - { name: "localidad", label: "Localidad", options: "localidades", dependencies: [ "departamento" ] }
-    - { name: "direccion", label: "Direccion", default: "" }
-    - { name: "max", label: "Cantidad máxima", default: "10" }
-    - { name: "desplazar", label: "Desplazar a la manzana", default: false }
-    - { name: "geometria", label: "geometria", default: "puntos", options: [ "puntos" ], visible: false }
-    - { name: "aplanar", label: "aplanar", default: true, visible: false }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "localidad_censal"
+      type: "list"
+      label: "Localidad censal"
+      default: null
+      options:
+        - [ "Todas las localidades censales", null ]
+      extras:
+        endpoint: "localidades-censales"
+        params: [ "provincia", "departamento" ]
+
+    - name: "localidad"
+      type: "list"
+      label: "Localidad"
+      default: null
+      options:
+        - [ "Todas las localidades", null ]
+      extras:
+        endpoint: "localidades"
+        params: ["departamento"]
+      visible: false
+
+    - name: "direccion"
+      type: "text"
+      label: "Dirección"
+      default: ""
+      required: true
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad máxima"
+      default: "10"
+
+    - name: "desplazar"
+      type: "bool"
+      label: "Desplazar a la manzana"
+      default: false
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "geojson"
+      options:
+        - [ "Puntos", "geojson" ]
+      visible: false
+
+    - name: "aplanar"
+      type: "bool"
+      label: "Aplanar"
+      default: true
+      visible: false
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
 
 ubicacion:
   title: "Ubicación"
@@ -143,27 +686,103 @@ ubicacion:
   reverse_georef: true
   tmp_layer: false
   params:
-    - { name: "lat", label: "Latitud" }
-    - { name: "lon", label: "Longitud" }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "lat"
+      type: "text"
+      label: "Latitud"
+
+    - name: "lon"
+      type: "text"
+      label: "Longitud"
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
   fields:
-    - { name: "calle", label: "Calle" }
+    - name: "calle"
+      label: "Calle"
 
 establecimientos:
   title: "Establecimientos"
   url_path: "/establecimientos"
   full_download: false
   params:
-    - { name: "tipo", label: "Tipo", options: ["educativos", "universitarios"] }
-    - { name: "provincia", label: "Provincia", options: "provincias" }
-    - { name: "departamento", label: "Departamento", options: "departamentos", dependencies: ["provincia"] }
-    - { name: "nombre", label: "Nombre" }
-    - { name: "gestion", label: "Tipo de gestion", options: ["estatal", "privado"] }
-    - { name: "dependencia", label: "Dependencia"}
-    - { name: "id", label: "ID" }
-    - { name: "max", label: "Cantidad", default: "10" }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
-    - { name: "geometria", label: "Geometria", default: "puntos", options: [ "puntos" ], visible: false }
+    - name: "tipo"
+      type: "list"
+      label: "Tipo"
+      default: null
+      options:
+        - [ "Establecimientos educativos (hasta nivel terciario)", "educativos" ]
+        - [ "Instituciones universitarias (Unidades académicas)", "universitarios" ]
+
+    - name: "provincia"
+      type: "list"
+      label: "Provincia"
+      default: null
+      options:
+        - [ "Todas las provincias", null ]
+      extras:
+        endpoint: "provincias"
+        params: []
+
+    - name: "departamento"
+      type: "list"
+      label: "Departamento"
+      default: null
+      options:
+        - [ "Todos los departamentos", null ]
+      extras:
+        endpoint: "departamentos"
+        params: ["provincia"]
+
+    - name: "nombre"
+      type: "text"
+      label: "Nombre"
+
+    - name: "gestion"
+      type: "list"
+      label: "Tipo de gestión"
+      default: null
+      options:
+        - [ "Todos", null ]
+        - [ "Estatal", "estatal" ]
+        - [ "Privado", "privado" ]
+
+    - name: "dependencia"
+      type: "text"
+      label: "Dependencia"
+
+    - name: "id"
+      type: "text"
+      label: "ID"
+
+    - name: "max"
+      type: "text"
+      label: "Cantidad"
+      default: "10"
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "geojson"
+      options:
+        - [ "Puntos", "geojson" ]
+      visible: false
 
 establecimientos-cercanos:
   title: "Establecimientos cercanos"
@@ -172,8 +791,35 @@ establecimientos-cercanos:
   reverse_georef: true
   tmp_layer: false
   params:
-    - { name: "lat", label: "Latitud", default: "" }
-    - { name: "lon", label: "Longitud", default: "" }
-    - { name: "radio", label: "Radio [km]", default: "10" }
-    - { name: "tipo", label: "Tipo de establecimientos", options: [ "educativos", "universitarios" ] }
-    - { name: "campos", label: "Campos", default: "completo", options: ["basico", "estandar", "completo"], visible: false }
+    - name: "lat"
+      type: "text"
+      label: "Latitud"
+      default: ""
+
+    - name: "lon"
+      type: "text"
+      label: "Longitud"
+      default: ""
+
+    - name: "radio"
+      type: "text"
+      label: "Radio [km]"
+      default: "10"
+
+    - name: "tipo"
+      type: "list"
+      label: "Tipo de establecimientos"
+      default: null
+      options:
+        - [ "Educativos", "educativos" ]
+        - [ "Universitarios", "universitarios" ]
+
+    - name: "campos"
+      type: "list"
+      label: "Campos"
+      default: "completo"
+      options:
+        - [ "Básico", "basico" ]
+        - [ "Estándar", "estandar" ]
+        - [ "Completo", "completo" ]
+      visible: false
