@@ -201,6 +201,11 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
             if not param.get('visible', True):
                 container.setVisible(False)
 
+            if param.get('required', False):
+                qw.setProperty("required", True)
+                qw.setStyleSheet("QLineEdit[required='true'] { border: 1px solid #f07178; }")
+                qw.setPlaceholderText(self.tr("Este campo es obligatorio..."))
+
         self._link_params()
 
         self.layout_params.addStretch()
@@ -377,7 +382,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _build_endpoint_query(self, layer) -> str:
         """
-            Contruye en función de los parámetros actuales la url de consulta.
+            Construye en función de los parámetros actuales la url de consulta.
 
         :param layer: El nombre de la capa para la que se construirá la consulta
         :return: La url
@@ -532,11 +537,42 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
+    def validate_required_fields(self):
+        """Devuelve True si todos los campos requeridos están completos."""
+        for name, widget in self.param_widgets_dict.items():
+            if widget.property("required") == True:
+                if isinstance(widget, QtWidgets.QLineEdit):
+                    if not widget.text().strip():
+                        self.iface.messageBar().pushMessage(
+                            "Datos faltantes",
+                            f"El campo de texto '{name}' es obligatorio.",
+                            level=Qgis.Warning,
+                            duration=5
+                        )
+                        widget.setFocus()
+                        return False
+
+                elif isinstance(widget, QtWidgets.QComboBox):
+                    if widget.currentData() is None and not widget.currentText().strip():
+                        self.iface.messageBar().pushMessage(
+                            "Selección faltante",
+                            f"Debes seleccionar una opción para el campo '{name}'.",
+                            level=Qgis.Warning,
+                            duration=5
+                        )
+                        widget.setFocus()
+                        return False
+        return True
+
     def run_process(self):
         """
         Encapsula la lógica de descarga y carga.
         Retorna True si el proceso finalizó correctamente.
         """
+
+        if not self.validate_required_fields():
+            return False
+
         layer_name = self.comboBox_endpoints.currentData()
 
         try:
