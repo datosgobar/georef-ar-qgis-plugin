@@ -5,12 +5,13 @@ from functools import lru_cache
 
 import requests
 from qgis.PyQt import uic, QtWidgets, QtCore
+from qgis._core import QgsCoordinateTransform, QgsMessageLog
 from qgis.core import QgsSettings, QgsVectorLayer, Qgis
 from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 
-from .utils import get_endpoints_config
+from .utils import get_endpoints_config, PointTool
 
 import logging
 
@@ -34,6 +35,206 @@ ENDPOINTS = [
 ]
 
 logger = logging.getLogger(__name__)
+
+class MixinCoordinates:
+
+    def _on_map_clicked(self, point):
+        """Callback cuando el usuario hace clic en el mapa."""
+        # 1. Restaurar la herramienta anterior
+        self.iface.mapCanvas().unsetMapTool(self.map_tool)
+
+        # 2. Configurar la transformación
+        # SRC de origen: El que tenga el proyecto actualmente
+        src_origen = self.iface.mapCanvas().mapSettings().destinationCrs()
+        # SRC de destino: WGS84 (EPSG:4326)
+        src_destino = QgsCoordinateReferenceSystem("EPSG:4326")
+
+        # Crear el transformador
+        transformacion = QgsCoordinateTransform(src_origen, src_destino, QgsProject.instance())
+
+        try:
+            # Transformar el punto capturado
+            punto_wgs84 = transformacion.transform(point)
+
+            if hasattr(self, 'res_widgets'):
+                for widget in self.res_widgets.values():
+                    widget.clear()
+
+            # Buscamos en el diccionario general o en las variables específicas
+            lat_w = self.param_widgets_dict.get('lat')
+            lon_w = self.param_widgets_dict.get('lon')
+
+            if lat_w: lat_w.setText(f"{punto_wgs84.y():.6f}")
+            if lon_w: lon_w.setText(f"{punto_wgs84.x():.6f}")
+
+        except Exception as e:
+            self.iface.messageBar().pushMessage(
+                "Error de transformación",
+                f"No se pudo convertir la coordenada: {str(e)}",
+                level=Qgis.Warning
+            )
+
+        # 4. Volver a mostrar la ventana
+        self.setWindowState(QtCore.Qt.WindowActive)
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def _activate_map_tool(self):
+        """Activa la herramienta para capturar el clic en el lienzo."""
+        # self.setWindowState(QtCore.Qt.WindowMinimized)  # Minimizamos para ver el mapa
+        self.hide()
+        self.map_tool = PointTool(self.iface.mapCanvas(), self._on_map_clicked)
+        self.iface.mapCanvas().setMapTool(self.map_tool)
+
+    def group_coordinates(self):
+        # 2. Extraer las referencias de los widgets generados automáticamente
+        self.edit_lat = self.param_widgets_dict.get('lat')
+        self.edit_lon = self.param_widgets_dict.get('lon')
+
+        # Control de seguridad en caso de que cambie el YAML
+        if not self.edit_lat or not self.edit_lon:
+            return
+
+        # 3. EXTRAERLOS DEL LAYOUT ORIGINAL DE FORMA SEGURA
+        # Buscamos los contenedores intermedios que creó la clase padre para lat y lon
+        parent_container_lat = self.edit_lat.parentWidget()
+        parent_container_lon = self.edit_lon.parentWidget()
+
+        if parent_container_lat and parent_container_lat.layout():
+            # Extraemos el widget de su layout horizontal intermedio
+            parent_container_lat.layout().removeWidget(self.edit_lat)
+            # Removemos el contenedor intermedio del layout vertical principal del diálogo
+            self.layout_params.removeWidget(parent_container_lat)
+            parent_container_lat.hide()
+            parent_container_lat.deleteLater()  # Borramos el contenedor vacío de forma segura
+
+        if parent_container_lon and parent_container_lon.layout():
+            parent_container_lon.layout().removeWidget(self.edit_lon)
+            self.layout_params.removeWidget(parent_container_lon)
+            parent_container_lon.hide()
+            parent_container_lon.deleteLater()
+
+        # 4. Configurar placeholders para la nueva fila compacta
+        self.edit_lat.setPlaceholderText(self.tr("Latitude"))
+        self.edit_lon.setPlaceholderText(self.tr("Longitude"))
+
+        # --- FILA DE ENTRADA UNIFICADA (Lat/Lon + Botón) ---
+        container_in = QtWidgets.QWidget()
+        lyt_in = QtWidgets.QHBoxLayout(container_in)
+        lyt_in.setContentsMargins(0, 5, 0, 5)
+
+        lbl_in = QtWidgets.QLabel(self.tr("Coordinates:"))
+        lbl_in.setFixedWidth(128)  # Alineado con el resto del formulario
+
+        btn_map = QtWidgets.QPushButton()
+        btn_map.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogHelpButton))
+        btn_map.setFixedSize(28, 28)
+        btn_map.clicked.connect(self._activate_map_tool)
+
+        # 5. Inyectar los widgets originales reciclados en el nuevo layout horizontal
+        lyt_in.addWidget(lbl_in)
+        lyt_in.addWidget(self.edit_lat)
+        lyt_in.addWidget(self.edit_lon)
+        lyt_in.addWidget(btn_map)
+
+        self.layout_params.insertWidget(0, container_in)
+
+class MixinFields:
+
+    def render_fields(self):
+        """
+            Lee los campos de respuesta esperados desde el archivo de configuración (YAML)
+            y los renderiza dinámicamente en la parte inferior del diálogo.
+        """
+        if not hasattr(self, 'endpoints_config') or not hasattr(self, 'current_layer') or not hasattr(self,
+                                                                                                      'layout_params'):
+            logger.error("MixinFields se ejecutó en un diálogo sin la estructura o configuración base.")
+            return
+
+        # --- SEPARADOR VISUAL ---
+        line = QtWidgets.QFrame()
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.layout_params.addWidget(line)
+
+        self.res_widgets = {}
+
+        current_config = self.endpoints_config.get(self.current_layer, {})
+
+        campos_res = current_config.get('fields', [])
+
+        for campo in campos_res:
+            key_res = campo.get('name')
+            label_text = campo.get('label', key_res)
+
+            container_res = QtWidgets.QWidget()
+            lyt_res = QtWidgets.QHBoxLayout(container_res)
+            lyt_res.setContentsMargins(0, 2, 0, 2)
+
+            lbl = QtWidgets.QLabel(label_text)
+            lbl.setFixedWidth(128)  # Alineación consistente con las etiquetas de entrada
+
+            edit = QtWidgets.QLineEdit()
+            edit.setReadOnly(True)
+            edit.setStyleSheet("background-color: #f4f4f4; border: 1px solid #dcdcdc;")
+
+            lyt_res.addWidget(lbl)
+            lyt_res.addWidget(edit)
+
+            # Guardamos la referencia indexada por el 'name' definido en el YAML
+            self.res_widgets[key_res] = edit
+            self.layout_params.addWidget(container_res)
+
+        self.layout_params.addStretch()
+        self.scrollAreaWidgetContents.adjustSize()
+
+    def show_response(self):
+        """Consulta la API y mapea las respuestas usando las claves del YAML."""
+        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.WaitCursor)
+        try:
+            url = self._build_endpoint_query(self.current_layer)
+            response = self._query(url, timeout=10)
+            data = response.json()
+
+            res = data.get(self.current_layer, {})
+
+            # Limpiamos resultados previos de la interfaz
+            for w in self.res_widgets.values():
+                w.clear()
+
+            if not res:
+                self.iface.messageBar().pushMessage("Georef", "Sin datos para esta consulta", level=Qgis.Info)
+                return
+
+            current_config = self.endpoints_config.get(self.current_layer, {})
+            campos_res = current_config.get('fields', [])
+
+            for campo in campos_res:
+                key = campo.get('name')
+                widget = self.res_widgets.get(key)
+
+                if not widget:
+                    continue
+
+                # Si el campo en el YAML indica un path anidado (ej: 'calle.nombre')
+                field_path = campo.get('api_path', key).split('.')
+
+                # Navegamos el diccionario de respuesta de la API paso a paso según el path
+                val = res
+                for step in field_path:
+                    if isinstance(val, dict):
+                        val = val.get(step, '')
+                    else:
+                        val = ''
+                        break
+
+                widget.setText(str(val) if val is not None else '')
+
+        except Exception as e:
+            self.iface.messageBar().pushMessage("Error", str(e), level=Qgis.Critical)
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
 
 class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
@@ -141,7 +342,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
         # Si el parámetro no es booleano se coloca la etiqueta a la izquierda
         lbl = QtWidgets.QLabel(label)
-        lbl.setFixedWidth(128)
+        lbl.setFixedWidth(192)
         parent_layout.addWidget(lbl)
 
         # Parámetro de tipo lista
@@ -365,11 +566,18 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         self.label_out.setVisible(tmp_layer)
 
     @lru_cache(maxsize=32)
-    def _query(self, url, timeout=5):
-        logger.info(f"QUERY: {url}")
+    def _execute_cached_request(self, url, timeout):
+        QgsMessageLog.logMessage(f" -> [API] Petición real enviada al servidor", tag="Georef AR", level=Qgis.Info)
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         return response
+
+    def _query(self, url, timeout=5):
+        # Este log se va a ejecutar SIEMPRE
+        QgsMessageLog.logMessage(f"Solicitud de datos para: {url}", tag="Georef AR", level=Qgis.Info)
+
+        # Llamamos a la función con cache
+        return self._execute_cached_request(url, timeout)
 
     def _get_base_url(self):
         return self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')

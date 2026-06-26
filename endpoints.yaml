@@ -689,10 +689,12 @@ ubicacion:
     - name: "lat"
       type: "text"
       label: "Latitud"
+      required: true
 
     - name: "lon"
       type: "text"
       label: "Longitud"
+      required: true
 
     - name: "campos"
       type: "list"
@@ -703,9 +705,20 @@ ubicacion:
         - [ "Estándar", "estandar" ]
         - [ "Completo", "completo" ]
       visible: false
+
   fields:
-    - name: "calle"
+    - name: "calle.nombre"
       label: "Calle"
+    - name: "calle.altura"
+      label: "Número"
+    - name: "gobierno_local.nombre"
+      label: "Gobierno Local"
+    - name: "departamento.nombre"
+      label: "Departamento"
+    - name: "provincia.nombre"
+      label: "Provincia"
+    - name: "nomenclatura"
+      label: "Nomenclatura"
 
 establecimientos:
   title: "Establecimientos"
@@ -801,7 +814,7 @@ establecimientos-cercanos:
       label: "Longitud"
       default: ""
 
-    - name: "radio"
+    - name: "distancia"
       type: "text"
       label: "Radio [km]"
       default: "10"
@@ -811,6 +824,7 @@ establecimientos-cercanos:
       label: "Tipo de establecimientos"
       default: null
       options:
+        - [ "Todos", null ]
         - [ "Educativos", "educativos" ]
         - [ "Universitarios", "universitarios" ]
 
@@ -822,4 +836,12 @@ establecimientos-cercanos:
         - [ "Básico", "basico" ]
         - [ "Estándar", "estandar" ]
         - [ "Completo", "completo" ]
+      visible: false
+
+    - name: "formato"
+      type: "list"
+      label: "Geometría"
+      default: "geojson"
+      options:
+        - [ "Puntos", "geojson" ]
       visible: false
