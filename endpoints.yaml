@@ -828,6 +828,11 @@ establecimientos-cercanos:
         - [ "Educativos", "educativos" ]
         - [ "Universitarios", "universitarios" ]
 
+    - name: "max"
+      type: "text"
+      label: "Cantidad"
+      default: "10"
+
     - name: "campos"
       type: "list"
       label: "Campos"
