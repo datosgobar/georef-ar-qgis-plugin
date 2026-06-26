@@ -3,12 +3,12 @@ from qgis.PyQt import QtCore
 
 class MenuStrings:
     """Strings appearing in the QGIS menu bar, submenus, and panels"""
-    PLUGIN_NAME = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef AR API")
-    MENU_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef AR API")
+    PLUGIN_NAME = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef AR")
+    MENU_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef AR")
 
     TERRITORIAL_UNITS_QUERIES_MENU_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Territorial units")
 
-    GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Geocoding")
+    GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef Ar | Geocodificación")
     GEOCODING_DESCRIPTION = QtCore.QCoreApplication.translate(
         'GeocodingDialog',
         "Allows standardizing and georeferencing a postal address using Georef services. "
@@ -25,7 +25,7 @@ class MenuStrings:
         "geographic location."
     )
 
-    REVERSE_GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Reverse Geocoding")
+    REVERSE_GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef Ar | Geocodificación inversa")
     REVERSE_GEOCODING_DESCRIPTION = QtCore.QCoreApplication.translate(
         'ReverseGeocodingDialog',
         "Allows obtaining territorial and addressing information from a geographic location. "
@@ -37,7 +37,7 @@ class MenuStrings:
         "Click 'Apply' to view the data for the selected point."
     )
 
-    NEARBY_ESTABLISHMENT_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Nearby Establishments")
+    NEARBY_ESTABLISHMENT_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef Ar | Establecimientos cercanos")
     NEARBY_ESTABLISHMENT_DESCRIPTION = QtCore.QCoreApplication.translate(
         'NearbyEstablishmentsDialog',
         "Allows locating public facilities and government agencies near a specific location. "

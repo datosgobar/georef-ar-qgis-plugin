@@ -466,11 +466,9 @@ radios-censales:
         params: ["provincia"]
 
     - name: "fraccion_censal"
-      type: "list"
+      type: "text"
       label: "Fracción censal"
       default: null
-      options:
-        - [ "Todas las fracciones censales", null ]
       extras:
         endpoint: "fracciones-censales"
         params: [ "provincia", "departamento" ]
@@ -768,7 +766,7 @@ establecimientos:
 
     - name: "dependencia"
       type: "text"
-      label: "Dependencia"
+      label: "Universidad"
 
     - name: "id"
       type: "text"
@@ -825,8 +823,8 @@ establecimientos-cercanos:
       default: null
       options:
         - [ "Todos", null ]
-        - [ "Educativos", "educativos" ]
-        - [ "Universitarios", "universitarios" ]
+        - [ "Establecimientos educativos (hasta nivel terciario)", "educativos" ]
+        - [ "Instituciones universitarias (Unidades académicas)", "universitarios" ]
 
     - name: "max"
       type: "text"

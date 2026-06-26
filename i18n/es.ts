@@ -17,19 +17,14 @@
         <translation>Sobre Georef Ar</translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="101"/>
-        <source>&lt;p align=&quot;center&quot;&gt;Version 1.0&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p align=&quot;center&quot;&gt;Versión 1.0&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</translation>
-    </message>
-    <message>
         <location filename="../ui/about_dialog.ui" line="52"/>
         <source>Georef AR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="53"/>
-        <source>Plugin oficial para consumir la API del Servicio de Normalización de Direcciones y Unidades Territoriales de Argentina</source>
-        <translation>Plugin oficial para consumir la API del Servicio de Normalización de Direcciones y Unidades Territoriales de Argentina</translation>
+        <location filename="../ui/about_dialog.ui" line="120"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version 1.0&lt;br/&gt;&lt;a href=&quot;https://github.com/datosgobar/georef-ar-qgis-plugin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://www.argentina.gob.ar/georef/georef-servicio-de-normalizacion-de-direcciones-y-unidades-territoriales-de-argentina&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;API&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.argentina.gob.ar/georef/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.argentina.gob.ar/georef&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;datosargentina@sicyt.gob.ar&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -65,7 +60,7 @@
     <message>
         <location filename="../ui/endpoint_dialog.ui" line="14"/>
         <source>GeorefAR | Territorial unities</source>
-        <translation>GeorrefAR | Unidades territoriales</translation>
+        <translation>Georef AR | Unidades territoriales</translation>
     </message>
     <message>
         <location filename="../ui/endpoint_dialog.ui" line="35"/>
@@ -114,7 +109,7 @@
         <translation>Acerca</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="7"/>
+        <location filename="../strings.py" line="6"/>
         <source>Georef AR API</source>
         <translation></translation>
     </message>
@@ -177,6 +172,11 @@
         <location filename="../strings.py" line="11"/>
         <source>Geocoding</source>
         <translation>Geocodificación</translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="7"/>
+        <source>Georef AR</source>
+        <translation></translation>
     </message>
 </context>
 <context>

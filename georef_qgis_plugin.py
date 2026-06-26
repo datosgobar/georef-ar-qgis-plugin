@@ -65,7 +65,7 @@ class GeorefQgisPlugin:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr('Georef Ar Api')
+        self.menu = self.tr('Georef Ar')
 
         self.dlg = None
 
@@ -236,12 +236,12 @@ class GeorefQgisPlugin:
         plugins_menu = self.iface.pluginMenu()
         self.q_menu = None
         for action in plugins_menu.actions():
-            if action.menu() and action.menu().title() == self.tr('Georef AR API'):
+            if action.menu() and action.menu().title() == self.tr('Georef AR'):
                 self.q_menu = action.menu()
                 break
 
         if not self.q_menu:
-            self.q_menu = QMenu(self.tr('Georef AR API'), plugins_menu)
+            self.q_menu = QMenu(self.tr('Georef AR'), plugins_menu)
             plugins_menu.addMenu(self.q_menu)
 
         self.q_menu.clear()
