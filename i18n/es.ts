@@ -22,7 +22,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="120"/>
+        <location filename="../ui/about_dialog.ui" line="129"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version 1.0&lt;br/&gt;&lt;a href=&quot;https://github.com/datosgobar/georef-ar-qgis-plugin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://www.argentina.gob.ar/georef/georef-servicio-de-normalizacion-de-direcciones-y-unidades-territoriales-de-argentina&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;API&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.argentina.gob.ar/georef/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.argentina.gob.ar/georef&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;datosargentina@sicyt.gob.ar&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -81,12 +81,12 @@
 <context>
     <name>GeocodingDialog</name>
     <message>
-        <location filename="../strings.py" line="12"/>
+        <location filename="../strings.py" line="13"/>
         <source>Allows standardizing and georeferencing a postal address using Georef services. Enter the address data, such as street, house number, and locality, to obtain its geographic location and associated territorial information. The results can be visualized directly on the map and used in subsequent spatial analyses.</source>
         <translation>Permite normalizar y georreferenciar una dirección postal utilizando los servicios de Georef. Ingrese los datos de la dirección, como calle, numeración y localidad, para obtener su ubicación geográfica y la información territorial asociada. Los resultados obtenidos pueden visualizarse directamente sobre el mapa y utilizarse en posteriores análisis espaciales.</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="19"/>
+        <location filename="../strings.py" line="20"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; A query may return more than one result if the entered information is insufficient or if there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires that the selected street includes house number data in the data sources used by Georef. In cases where this information is unavailable, the address can be standardized, but it will not be possible to retrieve its geographic location.</source>
         <translation>&lt;b&gt;Nota:&lt;/b&gt; Una búsqueda puede devolver más de un resultado cuando la información ingresada es insuficiente o existen coincidencias similares en distintas jurisdicciones. Asimismo, la georreferenciación de una dirección requiere que la calle seleccionada cuente con información sobre alturas en las fuentes de datos utilizadas por Georef. En aquellos casos en que esta información no esté disponible, la dirección podrá ser normalizada, pero no será posible obtener su ubicación geográfica.</translation>
     </message>
@@ -94,72 +94,52 @@
 <context>
     <name>GeorefQgisPlugin</name>
     <message>
-        <location filename="../georef_qgis_plugin.py" line="68"/>
-        <source>Georef Ar Api</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../strings.py" line="49"/>
+        <location filename="../strings.py" line="54"/>
         <source>Settings</source>
         <translation>Configuraciones</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="50"/>
+        <location filename="../strings.py" line="55"/>
         <source>About</source>
         <translation>Acerca</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="6"/>
-        <source>Georef AR API</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../strings.py" line="28"/>
-        <source>Reverse Geocoding</source>
-        <translation>Geocodificación inversa</translation>
-    </message>
-    <message>
-        <location filename="../strings.py" line="40"/>
-        <source>Nearby Establishments</source>
-        <translation>Establecimientos cercanos</translation>
-    </message>
-    <message>
-        <location filename="../strings.py" line="55"/>
+        <location filename="../strings.py" line="60"/>
         <source>Territorial Divisions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="56"/>
+        <location filename="../strings.py" line="61"/>
         <source>Infrastructure and Streets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="57"/>
+        <location filename="../strings.py" line="62"/>
         <source>Points of Interest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="62"/>
+        <location filename="../strings.py" line="67"/>
         <source>Could not connect to Georef API. Please check your internet connection.</source>
         <translation>No se pudo conectar a la API de Georef. Por favor revise su conección a internet.</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="63"/>
+        <location filename="../strings.py" line="68"/>
         <source>The server took too long to respond. Please try again later.</source>
         <translation>El servidor parece estar tardando en responder. Por favor intente más tarde.</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="64"/>
+        <location filename="../strings.py" line="69"/>
         <source>API Server Error (Status {code}).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../strings.py" line="69"/>
+        <location filename="../strings.py" line="74"/>
         <source>The query returned no features. Try adjusting your filters.</source>
         <translation>La consulta no devolvió resultados. Intente ajustar sus filtros.</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="70"/>
+        <location filename="../strings.py" line="75"/>
         <source>Layer successfully loaded into the project.</source>
         <translation>Capa cargada exitosamente en el proyecto.</translation>
     </message>
@@ -169,14 +149,44 @@
         <translation>Unidades territoriales</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="11"/>
-        <source>Geocoding</source>
-        <translation>Geocodificación</translation>
-    </message>
-    <message>
         <location filename="../strings.py" line="7"/>
         <source>Georef AR</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../georef_qgis_plugin.py" line="68"/>
+        <source>Georef Ar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="11"/>
+        <source>Georef Ar | Geocodificación</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="12"/>
+        <source>Geocodificación</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="29"/>
+        <source>Georef Ar | Geocodificación inversa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="30"/>
+        <source>Geocodificación inversa</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="43"/>
+        <source>Georef Ar | Establecimientos cercanos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../strings.py" line="44"/>
+        <source>Establecimientos cercanos</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -200,7 +210,7 @@
 <context>
     <name>NearbyEstablishmentsDialog</name>
     <message>
-        <location filename="../strings.py" line="41"/>
+        <location filename="../strings.py" line="46"/>
         <source>Allows locating public facilities and government agencies near a specific location. Select a point on the map or enter its coordinates, and specify the search radius, the maximum number of results, and the type of establishment to query. The results will be added to the project as a geographic layer for visualization and analysis.</source>
         <translation>Permite localizar establecimientos y organismos públicos próximos a una ubicación determinada. Seleccione un punto sobre el mapa o ingrese sus coordenadas, indique el radio de búsqueda, la cantidad máxima de resultados y el tipo de establecimiento a consultar. Los resultados se incorporarán al proyecto como una capa geográfica para su visualización y análisis.</translation>
     </message>
@@ -208,12 +218,12 @@
 <context>
     <name>ReverseGeocodingDialog</name>
     <message>
-        <location filename="../strings.py" line="29"/>
+        <location filename="../strings.py" line="32"/>
         <source>Allows obtaining territorial and addressing information from a geographic location. Enter the coordinates or select a point on the map to find the closest address—if it exists—and the different territorial units containing that point, such as province, department, municipality, and locality.</source>
         <translation>Permite obtener información territorial y de direccionamiento a partir de una ubicación geográfica. Ingrese las coordenadas o seleccione un punto sobre el mapa para conocer la dirección más cercana —si existe— y las distintas unidades territoriales que contienen ese punto, como provincia, departamento, municipio y localidad.</translation>
     </message>
     <message>
-        <location filename="../strings.py" line="35"/>
+        <location filename="../strings.py" line="38"/>
         <source>Click &apos;Apply&apos; to view the data for the selected point.</source>
         <translation>Presiona “Aplicar” para ver los datos del punto elegido.</translation>
     </message>

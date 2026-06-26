@@ -189,7 +189,7 @@ class GeorefQgisPlugin:
 
         self.action_addresses = self.add_action(
             icon_path=':/plugins/georef_ar_api/icons/geocoding.svg',
-            text=self.tr(MenuStrings.GEOCODING_TITLE),
+            text=self.tr(MenuStrings.GEOCODING_MENU_TITLE),
             callback=self._create_dialog_callback(GeocodingDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
@@ -198,7 +198,7 @@ class GeorefQgisPlugin:
 
         self.action_reverse_geocoding = self.add_action(
             icon_path=':/plugins/georef_ar_api/icons/reverse_geocoding.svg',
-            text=self.tr(MenuStrings.REVERSE_GEOCODING_TITLE),
+            text=self.tr(MenuStrings.REVERSE_GEOCODING_MENU_TITLE),
             callback=self._create_dialog_callback(ReverseGeocodingDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
@@ -207,7 +207,7 @@ class GeorefQgisPlugin:
 
         self.action_nearby_establishments = self.add_action(
             icon_path=':/plugins/georef_ar_api/icons/nearby_establishments.svg',
-            text=self.tr(MenuStrings.NEARBY_ESTABLISHMENT_TITLE),
+            text=self.tr(MenuStrings.NEARBY_ESTABLISHMENT_MENU_TITLE),
             callback=self._create_dialog_callback(NearbyEstablishmentsDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
