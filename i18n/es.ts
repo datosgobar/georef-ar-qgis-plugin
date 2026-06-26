@@ -17,27 +17,32 @@
         <translation>Sobre Georef Ar</translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="51"/>
-        <source>Georef AR QGIS Plugin</source>
-        <translation>Plugin Georef AR QGIS</translation>
+        <location filename="../ui/about_dialog.ui" line="101"/>
+        <source>&lt;p align=&quot;center&quot;&gt;Version 1.0&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p align=&quot;center&quot;&gt;Versión 1.0&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="61"/>
-        <source>Official plugin for consuming the Georeferencing API of the Argentine Republic.</source>
-        <translation>Plugin oficial para consumir la API de georeferenciación de Argentina.</translation>
+        <location filename="../ui/about_dialog.ui" line="52"/>
+        <source>Georef AR</source>
+        <translation></translation>
     </message>
     <message>
-        <location filename="../ui/about_dialog.ui" line="74"/>
-        <source>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p align=&quot;center&quot;&gt;Versión 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentación&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</translation>
+        <location filename="../ui/about_dialog.ui" line="53"/>
+        <source>Plugin oficial para consumir la API del Servicio de Normalización de Direcciones y Unidades Territoriales de Argentina</source>
+        <translation>Plugin oficial para consumir la API del Servicio de Normalización de Direcciones y Unidades Territoriales de Argentina</translation>
     </message>
 </context>
 <context>
     <name>EndpointDialog</name>
     <message>
-        <location filename="../logic/endpoint_dialog.py" line="272"/>
+        <location filename="../logic/endpoint_dialog.py" line="562"/>
         <source>[Create temporal layer]</source>
         <translation>[Crear capa temporal]</translation>
+    </message>
+    <message>
+        <location filename="../logic/endpoint_dialog.py" line="408"/>
+        <source>Este campo es obligatorio...</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -175,6 +180,24 @@
     </message>
 </context>
 <context>
+    <name>MixinCoordinates</name>
+    <message>
+        <location filename="../logic/endpoint_dialog.py" line="119"/>
+        <source>Latitude</source>
+        <translation type="unfinished">Latitud</translation>
+    </message>
+    <message>
+        <location filename="../logic/endpoint_dialog.py" line="120"/>
+        <source>Longitude</source>
+        <translation type="unfinished">Longitud</translation>
+    </message>
+    <message>
+        <location filename="../logic/endpoint_dialog.py" line="127"/>
+        <source>Coordinates:</source>
+        <translation type="unfinished">Coordenadas:</translation>
+    </message>
+</context>
+<context>
     <name>NearbyEstablishmentsDialog</name>
     <message>
         <location filename="../strings.py" line="41"/>
@@ -184,51 +207,6 @@
 </context>
 <context>
     <name>ReverseGeocodingDialog</name>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="40"/>
-        <source>Coordinates:</source>
-        <translation>Coordenadas:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="44"/>
-        <source>Latitude</source>
-        <translation>Latitud</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="46"/>
-        <source>Longitude</source>
-        <translation>Longitud</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="72"/>
-        <source>Street:</source>
-        <translation>Calle:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="73"/>
-        <source>Number:</source>
-        <translation>Número:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="74"/>
-        <source>Local Government:</source>
-        <translation>Gobierno Local:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="75"/>
-        <source>Department:</source>
-        <translation>Departamento:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="76"/>
-        <source>Province:</source>
-        <translation>Provincia:</translation>
-    </message>
-    <message>
-        <location filename="../logic/reverse_geocoding_dialog.py" line="77"/>
-        <source>Nomenclature:</source>
-        <translation>Nomenclatura:</translation>
-    </message>
     <message>
         <location filename="../strings.py" line="29"/>
         <source>Allows obtaining territorial and addressing information from a geographic location. Enter the coordinates or select a point on the map to find the closest address—if it exists—and the different territorial units containing that point, such as province, department, municipality, and locality.</source>

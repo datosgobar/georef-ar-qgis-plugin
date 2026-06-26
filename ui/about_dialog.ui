@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>761</width>
-    <height>624</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,8 +59,27 @@
    <item>
     <widget class="QLabel" name="label_desc">
      <property name="text">
+      <string notr="true">Plugin oficial para consumir la API del Servicio de Normalización de Direcciones y Unidades Territoriales de Argentina</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_desc">
+     <property name="text">
       <string notr="true">Dirección de Datos Abiertos
-Dirección Nacional de Gobierno Abierto
 Subsecretaría de Tecnologías de la Información y las Comunicaciones
 </string>
      </property>
@@ -98,7 +117,7 @@ Subsecretaría de Tecnologías de la Información y las Comunicaciones
    <item>
     <widget class="QLabel" name="label_links">
      <property name="text">
-      <string>&lt;p align=&quot;center&quot;&gt;Version 0.1&lt;br&gt;&lt;a href=&quot;https://datosgobar.github.io/georef-ar-qgis-plugin/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;datosargentina@sicyt.gob.ar&lt;/a&gt;&lt;/p&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version 1.0&lt;br/&gt;&lt;a href=&quot;https://github.com/datosgobar/georef-ar-qgis-plugin&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;https://www.argentina.gob.ar/georef/georef-servicio-de-normalizacion-de-direcciones-y-unidades-territoriales-de-argentina&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;API&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.argentina.gob.ar/georef/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.argentina.gob.ar/georef&lt;/span&gt;&lt;/a&gt; | &lt;a href=&quot;mailto:datosargentina@sicyt.gob.ar&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;datosargentina@sicyt.gob.ar&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -133,8 +152,7 @@ Subsecretaría de Tecnologías de la Información y las Comunicaciones
    </item>
   </layout>
  </widget>
- <resources>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
