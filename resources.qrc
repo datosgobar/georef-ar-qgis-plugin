@@ -8,5 +8,6 @@
         <file>icons/territorial_units.svg</file>
         <file>images/logo.png</file>
         <file>images/sign.svg</file>
+        <file>images/sign.png</file>
     </qresource>
 </RCC>

@@ -568,7 +568,13 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
     @lru_cache(maxsize=32)
     def _execute_cached_request(self, url, timeout):
         QgsMessageLog.logMessage(f" -> [API] Petición real enviada al servidor", tag="Georef AR", level=Qgis.Info)
-        response = requests.get(url, timeout=timeout)
+
+        headers = {
+            "User-Agent": "QgisGeorefArPlugin/1.0.0",
+            "X-Source-App": "QGIS-Georef-Argentina"
+        }
+
+        response = requests.get(url, timeout=timeout, headers=headers)
         response.raise_for_status()
         return response
 
