@@ -23,7 +23,7 @@ hasProcessingProvider=no
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=georef, argentina, vector, api, indec
+tags=georef, argentina, geocoding, reverse geocoding, open data, qgis, address
 
 homepage=http://homepage
 category=Plugins
