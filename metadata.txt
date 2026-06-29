@@ -3,7 +3,7 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Georef Ar QGIS Plugin
+name=Georef Ar
 qgisMinimumVersion=3.28
 description=Plugin desarrollado para consultas a la API de Georef-Ar
 version=1.0
