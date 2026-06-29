@@ -49,7 +49,7 @@ Con este plugin podés buscar, filtrar y cargar provincias, departamentos, local
 
 El plugin fue refactorizado para soportar adición de nuevos campos o endpoints modificando únicamente el archivo de configuración, sin tocar el código central de Python:
 
-* `config.yaml`: Define los endpoints de la API, los tipos de widgets de Qt (`list`, `text`), valores por defecto y lógicas de dependencia.
+* `endpoints.yaml`: Define los endpoints de la API, los tipos de widgets de Qt (`list`, `text`), valores por defecto y lógicas de dependencia.
 * `main_plugin.py`: Contiene el motor genérico que lee el YAML, genera la interfaz gráfica (UI) en caliente y gestiona las peticiones de red.
 * `metadata.txt`: Metadatos requeridos por el ecosistema QGIS.
 
