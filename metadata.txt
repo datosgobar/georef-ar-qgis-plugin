@@ -4,13 +4,13 @@
 
 [general]
 name=Georef Ar QGIS Plugin
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.28
 description=Plugin desarrollado para consultas a la API de Georef-Ar
 version=1.0
 author=Datos Argentina
 email=datosargentina@sicyt.gob.ar
 
-about=Provide a brief description of the plugin and its purpose.
+about=Plugin para consumir la API de Georef AR.
 
 tracker=https://github.com/datosgobar/georef-ar-qgis-plugin/issues
 repository=https://github.com/datosgobar/georef-ar-qgis-plugin
@@ -23,7 +23,7 @@ hasProcessingProvider=no
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=georef, argentina, vector, api, indec
 
 homepage=http://homepage
 category=Plugins
