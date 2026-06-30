@@ -6,7 +6,7 @@
 name=Georef Ar
 qgisMinimumVersion=3.28
 description=Plugin desarrollado para consultas a la API de Georef-Ar
-version=1.0
+version=1.0.1
 author=Datos Argentina
 email=datosargentina@sicyt.gob.ar
 
