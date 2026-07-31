@@ -3,14 +3,17 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=Georef Ar
+name=Georef-Ar
 qgisMinimumVersion=3.28
-description=Plugin desarrollado para consultas a la API de Georef-Ar
-version=1.0.1
+description=Complemento oficial para acceder a las funcionalidades de la API Georef desde QGIS.
+version=1.0.5
 author=Datos Argentina
 email=datosargentina@sicyt.gob.ar
 
-about=Plugin para consumir la API de Georef AR.
+about=Georef-Ar es el complemento oficial que integra las principales funcionalidades de la API Georef directamente en QGIS, facilitando la consulta y utilización de información geográfica oficial de la República Argentina sin salir del entorno de trabajo.
+    A través del complemento es posible consultar unidades territoriales, normalizar y georreferenciar direcciones, realizar geocodificación inversa y localizar establecimientos y organismos públicos cercanos. Los resultados se incorporan al proyecto como capas geográficas o se presentan como información asociada, según la funcionalidad utilizada.
+    El complemento utiliza la API Georef, servicio del Sistema de Normalización de Direcciones y Unidades Territoriales de la República Argentina, desarrollada y mantenida por la Dirección de Datos Abiertos de la Secretaría de Innovación, Ciencia y Tecnología de la Nación, que integra información proveniente de fuentes oficiales para brindar servicios de normalización y georreferenciación de datos geográficos.
+    Este complemento es un desarrollo oficial de la Dirección de Datos Abiertos y constituye la forma recomendada de utilizar la API Georef desde QGIS.
 
 tracker=https://github.com/datosgobar/georef-ar-qgis-plugin/issues
 repository=https://github.com/datosgobar/georef-ar-qgis-plugin
@@ -23,7 +26,7 @@ hasProcessingProvider=no
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=georef, argentina, geocoding, reverse geocoding, open data, qgis, address
+tags=georef, georef-ar, argentina, geocoding, reverse geocoding, address, addresses, gazetteer, administrative boundaries, territorial units, open data, official data, qgis
 
 homepage=https://github.com/datosgobar/georef-ar-qgis-plugin
 category=Plugins
