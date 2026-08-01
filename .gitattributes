@@ -1,0 +1,17 @@
+# Exclusiones para el empaquetado del plugin (git archive / qgis-plugin-ci)
+.git export-ignore
+.github export-ignore
+.venv export-ignore
+__pycache__ export-ignore
+*.pyc export-ignore
+tests/ export-ignore
+test/ export-ignore
+pylintrc export-ignore
+Makefile export-ignore
+pb_tool.cfg export-ignore
+scripts/ export-ignore
+build_zip.py export-ignore
+help/make.bat export-ignore
+help/Makefile export-ignore
+.gitattributes export-ignore
+.qgis-plugin-ci export-ignore

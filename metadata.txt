@@ -6,7 +6,7 @@
 name=Georef-Ar
 qgisMinimumVersion=3.28
 description=Complemento oficial para acceder a las funcionalidades de la API Georef desde QGIS.
-version=1.0.5
+version=1.0.6
 author=Datos Argentina
 email=datosargentina@sicyt.gob.ar
 

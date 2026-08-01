@@ -1,15 +1,1 @@
 plugin_path: .
-
-plugin_zip_ignore:
-  - .git
-  - .github
-  - .venv
-  - __pycache__
-  - "*.pyc"
-  - tests
-  - test
-  - pylintrc
-  - Makefile
-  - pb_tool.cfg
-  - scripts
-  - build_zip.py
