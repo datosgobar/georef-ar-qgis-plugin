@@ -26,6 +26,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMenu
 from qgis.PyQt.QtWidgets import QToolBar
 
+from .logic.batch_geocoding_dialog import BatchGeocodingDialog
 from .strings import MenuStrings
 from .logic.geocoding_dialog import GeocodingDialog
 from .logic.nearby_establishments_dialog import NearbyEstablishmentsDialog
@@ -187,10 +188,19 @@ class GeorefQgisPlugin:
             parent=self.iface.mainWindow()
         )
 
-        self.action_addresses = self.add_action(
+        self.action_geocoding = self.add_action(
             icon_path=':/plugins/georef_ar_api/icons/geocoding.svg',
             text=self.tr(MenuStrings.GEOCODING_MENU_TITLE),
             callback=self._create_dialog_callback(GeocodingDialog, self.iface),
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parent=self.iface.mainWindow()
+        )
+
+        self.action_batch_geocoding = self.add_action(
+            icon_path=':/plugins/georef_ar_api/icons/batch_geocoding.svg',
+            text=self.tr(MenuStrings.BATCH_GEOCODING_MENU_TITLE),
+            callback=self._create_dialog_callback(BatchGeocodingDialog, self.iface),
             add_to_menu=False,
             add_to_toolbar=False,
             parent=self.iface.mainWindow()
@@ -248,7 +258,8 @@ class GeorefQgisPlugin:
         self.q_menu.setIcon(QIcon(icon_path))
 
         self.q_menu.addAction(self.action_territorial_units)
-        self.q_menu.addAction(self.action_addresses)
+        self.q_menu.addAction(self.action_geocoding)
+        self.q_menu.addAction(self.action_batch_geocoding)
         self.q_menu.addAction(self.action_reverse_geocoding)
         self.q_menu.addAction(self.action_nearby_establishments)
         self.q_menu.addSeparator()
@@ -259,7 +270,8 @@ class GeorefQgisPlugin:
         self.toolbar = self.iface.addToolBar("Georef AR Toolbar")
         self.toolbar.setObjectName("GeorefArToolbar")
         self.toolbar.addAction(self.action_territorial_units)
-        self.toolbar.addAction(self.action_addresses)
+        self.toolbar.addAction(self.action_geocoding)
+        self.toolbar.addAction(self.action_batch_geocoding)
         self.toolbar.addAction(self.action_reverse_geocoding)
         self.toolbar.addAction(self.action_nearby_establishments)
 

@@ -2,6 +2,7 @@
     <qresource prefix="/plugins/georef_ar_api" >
         <file>icon.png</file>
         <file>icons/geocoding.svg</file>
+        <file>icons/batch_geocoding.svg</file>
         <file>icons/nearby_establishments.svg</file>
         <file>icons/reverse_geocoding.svg</file>
         <file>icons/settings.svg</file>

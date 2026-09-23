@@ -26,6 +26,24 @@ class MenuStrings:
         "geographic location."
     )
 
+    BATCH_GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef Ar | Geocodificación por lote")
+    BATCH_GEOCODING_MENU_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Geocodificación por lote")
+    BATCH_GEOCODING_DESCRIPTION = QtCore.QCoreApplication.translate(
+        'GeocodingDialog',
+        "Allows standardizing and georeferencing a postal address using Georef services. "
+        "Enter the address data, such as street, house number, and locality, to obtain its geographic location and "
+        "associated territorial information. The results can be visualized directly on the map and used in "
+        "subsequent spatial analyses."
+    )
+    BATCH_GEOCODING_NOTE = QtCore.QCoreApplication.translate(
+        'GeocodingDialog',
+        "<b>Note:</b> A query may return more than one result if the entered information is insufficient or if "
+        "there are similar matches across different jurisdictions. Furthermore, georeferencing an address requires "
+        "that the selected street includes house number data in the data sources used by Georef. In cases where this "
+        "information is unavailable, the address can be standardized, but it will not be possible to retrieve its "
+        "geographic location."
+    )
+
     REVERSE_GEOCODING_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin', "Georef Ar | Geocodificación inversa")
     REVERSE_GEOCODING_MENU_TITLE = QtCore.QCoreApplication.translate('GeorefQgisPlugin',
                                                                 "Geocodificación inversa")
