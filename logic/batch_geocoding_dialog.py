@@ -153,18 +153,7 @@ class BatchGeocodingWorker(QThread):
                         res_item = api_res_map[idx]
                         matches = res_item.get("direcciones", [])
                         if matches:
-
-                            match = None
-
-                            for m in matches:
-                                ubicacion = m.get("ubicacion", {})
-                                lat = ubicacion.get("lat")
-                                lon = ubicacion.get("lon")
-                                if lat and lon:
-                                    match = m
-                                    break
-
-                            match = match or matches[0]
+                            match = matches[0]
                             ubicacion = match.get("ubicacion", {})
                             lat = ubicacion.get("lat")
                             lon = ubicacion.get("lon")
