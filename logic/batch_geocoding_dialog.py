@@ -90,7 +90,7 @@ class BatchGeocodingWorker(QThread):
                     if not dir_val:
                         continue
 
-                    item = {"direccion": dir_val}
+                    item = {"direccion": dir_val, "desplazar": True}
 
                     if col_prov is not None and col_prov < len(row):
                         prov_val = clean_text(row[col_prov])
