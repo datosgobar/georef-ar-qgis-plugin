@@ -221,6 +221,28 @@ class BatchGeocodingDialog(QDialog):
     def _setup_ui(self):
         layout = QVBoxLayout(self)
 
+        # 0. Leyenda / Encabezado
+        lbl_info = QLabel(
+            "<b>Geocodificación por Lotes (API Georef AR)</b><br>"
+            "<span style='color: #4f4f4f; font-size: 11px;'>"
+            "Permite geocodificar múltiples direcciones a partir de un archivo CSV. "
+            "Seleccione el archivo, su delimitador y asocie sus campos con los parámetros de Georef AR.<br><br>"
+            "<i>Para obtener resultados más precisos, se recomienda completar la mayor cantidad posible de datos de ubicación "
+            "(provincia, departamento y localidad), además de la dirección y la altura.</i>"
+            "</span>"
+        )
+        lbl_info.setWordWrap(True)
+        lbl_info.setStyleSheet("""
+                    QLabel {
+                        background-color: #f0f4f8;
+                        border: 1px solid #cbd5e1;
+                        border-radius: 5px;
+                        padding: 10px;
+                        margin-bottom: 4px;
+                    }
+                """)
+        layout.addWidget(lbl_info)
+
         # 1. Selección de Archivo
         file_group = QGroupBox("Archivo de Entrada")
         file_layout = QHBoxLayout()
