@@ -145,6 +145,7 @@ class BatchGeocodingWorker(QThread):
                         "departamento": "",
                         "localidad_censal": "",
                         "localidad": "",
+                        "nomenclatura": "",
                         "lat": None,
                         "lon": None
                     }
@@ -171,6 +172,7 @@ class BatchGeocodingWorker(QThread):
                             rec_data["departamento"] = match.get("departamento", {}).get("nombre", "")
                             rec_data["localidad_censal"] = match.get("localidad_censal", {}).get("nombre", "")
                             rec_data["localidad"] = match.get("localidad", {}).get("nombre", "")
+                            rec_data["nomenclatura"] = match.get("nomenclatura", "")
                             rec_data["lat"] = lat if lat else None
                             rec_data["lon"] = lon if lon else None
                         else:
@@ -454,6 +456,7 @@ class BatchGeocodingDialog(QDialog):
             QgsField("georef_departamento", QVariant.String),
             QgsField("georef_localidad_censal", QVariant.String),
             QgsField("georef_localidad", QVariant.String),
+            QgsField("georef_nomenclatura", QVariant.String),
             QgsField("georef_lat", QVariant.Double),
             QgsField("georef_lon", QVariant.Double)
         ])
@@ -477,6 +480,7 @@ class BatchGeocodingDialog(QDialog):
                 rec.get("departamento", ""),
                 rec.get("localidad_censal", ""),
                 rec.get("localidad", ""),
+                rec.get("nomenclatura", ""),
                 lat,
                 lon
             ]
