@@ -1,8 +1,6 @@
 import os
 import csv
-import json
-import urllib.request
-import urllib.error
+import requests
 
 from qgis.PyQt.QtCore import Qt, QThread, pyqtSignal, QVariant
 from qgis.PyQt.QtWidgets import (
@@ -30,6 +28,27 @@ class BatchGeocodingWorker(QThread):
         self.mappings = mappings
         self._is_cancelled = False
         self.base_url = base_url
+
+    def _post(self, url, data=None, json_data=None, timeout=30):
+        """
+        Método centralizado para realizar peticiones POST utilizando requests,
+        manteniendo la consistencia y evitando advertencias de seguridad de urllib.
+        """
+        try:
+            response = requests.post(
+                url,
+                data=data,
+                json=json_data,
+                timeout=timeout,
+                headers={'User-Agent': 'GeorefAR-QGIS-Plugin'}  # O los headers que uses en el plugin
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            # Aquí manejas el error de forma consistente con el resto de tus diálogos
+            # Por ejemplo, mostrando un mensaje en la interfaz o registrando un log
+            print(f"Error en petición POST a {url}: {e}")
+            return None
 
     def cancel(self):
         self._is_cancelled = True
@@ -117,16 +136,11 @@ class BatchGeocodingWorker(QThread):
 
                 resultados = []
                 if payload_direcciones:
-                    req_data = json.dumps({"direcciones": payload_direcciones}).encode('utf-8')
-                    req = urllib.request.Request(
-                        f"{self.base_url}/direcciones",
-                        data=req_data,
-                        headers={"Content-Type": "application/json", "User-Agent": "GeorefQGISPlugin/1.0"}
-                    )
+                    body_payload = {"direcciones": payload_direcciones}
 
                     try:
-                        with urllib.request.urlopen(req, timeout=30) as resp:
-                            res_json = json.loads(resp.read().decode('utf-8'))
+                        res_json = self._post(f"{self.base_url}/direcciones", json_data=body_payload)
+                        if res_json:
                             resultados = res_json.get("resultados", [])
                     except Exception as e:
                         print(e)
