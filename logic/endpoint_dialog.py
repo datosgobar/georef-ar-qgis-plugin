@@ -11,6 +11,7 @@ from requests import HTTPError
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 
+from . import constants
 from .utils import get_endpoints_config, PointTool
 
 import logging
@@ -521,7 +522,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def _fetch_values(self, endpoint, params):
 
-        base_url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
+        base_url = self.settings.value("GeorefAr/api_url", constants.BASE_URL).rstrip('/')
         url = f"{base_url}/{endpoint}"
         if params:
             url = f"{url}?{'&'.join(params)}"
@@ -586,7 +587,7 @@ class EndpointDialog(QtWidgets.QDialog, FORM_CLASS):
         return self._execute_cached_request(url, timeout)
 
     def _get_base_url(self):
-        return self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
+        return self.settings.value("GeorefAr/api_url", constants.BASE_URL).rstrip('/')
 
     def _get_param_format(self):
         geom_qw = self.param_widgets_dict.get('geometria', None)

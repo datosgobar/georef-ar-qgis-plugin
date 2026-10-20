@@ -12,6 +12,7 @@ from qgis.core import (
     QgsVectorLayer, QgsField, QgsFeature, QgsGeometry,
     QgsPointXY, QgsProject, QgsSettings
 )
+from . import constants
 
 
 class BatchGeocodingWorker(QThread):
@@ -20,7 +21,7 @@ class BatchGeocodingWorker(QThread):
     finished_success = pyqtSignal(list, list, int, int)
     finished_error = pyqtSignal(str)
 
-    def __init__(self, file_path, delimiter, encoding, mappings, parent=None, base_url="https://apis.datos.gob.ar/georef/api"):
+    def __init__(self, file_path, delimiter, encoding, mappings, parent=None, base_url=constants.BASE_URL):
         super().__init__(parent)
         self.file_path = file_path
         self.delimiter = delimiter
@@ -444,7 +445,7 @@ class BatchGeocodingDialog(QDialog):
             delimiter=self._get_selected_delimiter(),
             encoding=self.combo_encoding.currentText(),
             mappings=mappings,
-            base_url=QgsSettings().value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api").rstrip('/')
+            base_url=QgsSettings().value("GeorefAr/api_url", constants.BASE_URL).rstrip('/')
         )
 
         self.worker.progress_changed.connect(self.progress_bar.setValue)

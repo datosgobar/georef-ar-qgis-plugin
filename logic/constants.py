@@ -1,0 +1,1 @@
+BASE_URL = "https://apis.datos.gob.ar/georef/api/v2.1"

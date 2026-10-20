@@ -4,6 +4,7 @@ from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsSettings
 from urllib.parse import urlparse
+from . import constants
 
 ui_path = os.path.join(os.path.dirname(__file__), '..', 'ui', 'settings_dialog.ui')
 FORM_CLASS, _ = uic.loadUiType(ui_path)
@@ -16,7 +17,7 @@ class SettingsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.settings = QgsSettings()
 
-        url = self.settings.value("GeorefAr/api_url", "https://apis.datos.gob.ar/georef/api/v2.1")
+        url = self.settings.value("GeorefAr/api_url", constants.BASE_URL)
         self.lineEdit_url.setText(url)
 
         self.btn_test_api.clicked.connect(self.test_connection)
